@@ -6,7 +6,6 @@
     <title>탈래말래 - 공지사항 및 FAQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- 외부 네비게이션 스크립트 -->
     <script src="nav.js"></script>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap");
@@ -32,154 +31,101 @@
             border-radius: 10px;
         }
 
-        /* 탭 활성화 스타일 (1:1 비율) */
-        .tab-btn {
-            position: relative;
-            transition: all 0.2s ease;
+        /* [추가됨] 네비게이션 활성화 스타일 */
+        .nav-item.active {
+            color: #4f46e5 !important;
+            background-color: #eef2ff !important;
         }
+
+        /* 탭 활성화 스타일 */
         .tab-btn.active {
             color: #4f46e5;
-        }
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #4f46e5;
+            border-bottom-width: 2px;
+            border-color: #4f46e5;
         }
 
         /* FAQ 아코디언 애니메이션 */
-        .faq-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .faq-item.active {
-            border-color: #eef2ff;
-            background-color: #fcfdfe;
+        .faq-item.active i {
+            transform: rotate(180deg);
         }
         .faq-item.active .faq-answer {
-            max-height: 500px;
-            margin-top: 1.25rem;
-            opacity: 1;
-        }
-        .faq-item.active i[data-lucide="chevron-down"] {
-            transform: rotate(180deg);
-            color: #4f46e5;
-        }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
+            display: block;
         }
     </style>
 </head>
 <body class="overflow-hidden">
-    <div class="flex h-screen p-4 gap-4">
-        <!-- 네비게이션 바 컨테이너 -->
-        <div id="navbar-container" class="w-20 h-full shrink-0 !overflow-visible"></div>
 
-        <!-- 메인 콘텐츠 영역 -->
+    <div class="flex h-screen p-4 gap-4">
+        <div id="navbar-container" class="w-20 h-full shrink-0 rounded-[2.5rem]"></div>
+
         <div class="flex-1 glass-panel rounded-[2.5rem] overflow-hidden flex flex-col">
-            <!-- 헤더 섹션 -->
-            <div class="p-10 pb-0 border-b border-slate-50">
-                <div class="max-w-4xl mx-auto w-full">
-                    <div class="mb-10">
-                        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">공지사항</h1>
-                        <p class="text-sm text-slate-400 font-medium mt-2">탈래말래의 새로운 소식과 자주 묻는 질문을 확인하세요.</p>
-                    </div>
-                    
-                    <!-- 탭 메뉴: 1:1 비율 -->
-                    <div class="flex w-full border-b border-slate-100">
-                        <button onclick="switchTab('notice')" id="tab-notice" class="tab-btn active flex-1 pb-4 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all">
-                            공지사항
-                        </button>
-                        <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn flex-1 pb-4 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all">
-                            자주 묻는 질문 (FAQ)
-                        </button>
-                    </div>
+            
+            <div class="p-8 pb-0 border-b border-slate-100">
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">공지사항</h1>
+                
+                <div class="flex gap-8">
+                    <button onclick="switchTab('notice')" id="tab-notice" class="tab-btn active pb-4 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors border-b-2 border-transparent">
+                        공지사항
+                    </button>
+                    <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn pb-4 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors border-b-2 border-transparent">
+                        자주 묻는 질문
+                    </button>
                 </div>
             </div>
 
-            <!-- 콘텐츠 리스트 -->
-            <div class="flex-1 overflow-y-auto custom-scroll p-10">
-                <div class="max-w-4xl mx-auto w-full space-y-4">
+            <div class="flex-1 overflow-y-auto custom-scroll p-8">
+                <div class="max-w-4xl mx-auto">
                     
-                    <!-- 공지사항 탭 내용 -->
                     <div id="content-notice" class="tab-content space-y-4">
-                        <!-- 공지 아이템 1 -->
-                        <div class="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm hover:border-indigo-100 transition-all cursor-pointer group">
-                            <div class="flex justify-between items-center mb-4">
-                                <div class="flex gap-2">
-                                    <span class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider">공지</span>
-                                    <span class="bg-slate-50 text-slate-400 text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider">필독</span>
-                                </div>
-                                <span class="text-[11px] font-medium text-slate-300">2024.03.15</span>
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">Update</span>
+                                <span class="text-xs text-slate-400">2024.03.15</span>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">매너 온도 산정 방식 고도화 안내</h3>
-                            <p class="text-sm text-slate-500 mt-3 leading-relaxed">보다 쾌적한 동승 환경을 위해 매너 점수 알고리즘이 업데이트 되었습니다. 주요 변경 사항 및 클린 동승 가이드를 확인해 보세요.</p>
+                            <h3 class="text-base font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">v1.2.4 업데이트 안내</h3>
+                            <p class="text-sm text-slate-500 line-clamp-1">채팅 기능 안정화 및 알림 센터 기능이 추가되었습니다.</p>
                         </div>
 
-                        <!-- 공지 아이템 2 -->
-                        <div class="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm hover:border-emerald-100 transition-all cursor-pointer group">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider">이벤트</span>
-                                <span class="text-[11px] font-medium text-slate-300">2024.03.10</span>
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-rose-50 text-rose-500 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">Event</span>
+                                <span class="text-xs text-slate-400">2024.03.10</span>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">봄맞이 웰컴 쿠폰팩 증정 이벤트</h3>
-                            <p class="text-sm text-slate-500 mt-3 leading-relaxed">새학기 시작을 응원하며 모든 유저분들께 3,000원 할인권을 드립니다. 지금 쿠폰함에서 확인하고 바로 사용해 보세요!</p>
+                            <h3 class="text-base font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">봄맞이 동승 포인트 2배 적립 이벤트!</h3>
+                            <p class="text-sm text-slate-500 line-clamp-1">3월 한 달간 택시 동승 완료 시 포인트를 2배로 적립해드립니다.</p>
                         </div>
 
-                        <!-- 공지 아이템 3 -->
-                        <div class="bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm hover:border-amber-100 transition-all cursor-pointer group">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="bg-amber-50 text-amber-600 text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider">안내</span>
-                                <span class="text-[11px] font-medium text-slate-300">2024.03.01</span>
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-slate-100 text-slate-500 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">Notice</span>
+                                <span class="text-xs text-slate-400">2024.03.01</span>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-800 group-hover:text-amber-600 transition-colors">서비스 이용약관 및 개인정보 처리방침 개정 안내</h3>
-                            <p class="text-sm text-slate-500 mt-3 leading-relaxed">사용자 데이터 보호 강화를 위해 개인정보 정책이 일부 개정되었습니다. 주요 변경 사항을 공지하오니 확인 부탁드립니다.</p>
+                            <h3 class="text-base font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">서비스 이용 약관 개정 안내</h3>
+                            <p class="text-sm text-slate-500 line-clamp-1">서비스 이용 약관이 일부 개정될 예정이오니 이용에 참고 부탁드립니다.</p>
                         </div>
                     </div>
 
-                    <!-- FAQ 탭 내용 -->
-                    <div id="content-faq" class="tab-content space-y-4 hidden">
-                        <!-- FAQ 아이템 1 -->
-                        <div class="faq-item bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm cursor-pointer transition-all" onclick="toggleFaq(this)">
-                            <div class="flex justify-between items-center gap-4">
-                                <div class="flex gap-4 items-center flex-1">
-                                    <span class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm shrink-0">Q</span>
-                                    <p class="text-[16px] font-bold text-slate-800 leading-snug">매칭이 완료된 후 취소하면 어떻게 되나요?</p>
-                                </div>
-                                <div class="p-1.5 bg-slate-50 rounded-full">
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
-                                </div>
-                            </div>
-                            <div class="faq-answer">
-                                <div class="flex gap-4 pl-12 border-t border-slate-50 pt-3"> <!-- pt-5에서 pt-3으로 상단 간격 축소 -->
-                                    <div class="text-[14px] text-slate-500 leading-relaxed">
-                                        배차가 완료된 후 취소할 경우 다른 동승자들에게 피해가 갈 수 있습니다. 잦은 취소 시 매너 온도가 하락하거나, 정책에 따라 일정 기간 서비스 이용이 제한될 수 있으니 신중하게 결정해 주세요.
-                                    </div>
+                    <div id="content-faq" class="tab-content hidden space-y-3">
+                        <div class="faq-item bg-white border border-slate-100 rounded-[1.5rem] overflow-hidden">
+                            <button onclick="toggleFaq(this.parentElement)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                                <span class="text-sm font-bold text-slate-800">동승 매칭은 어떻게 취소하나요?</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-answer hidden p-5 pt-0 bg-slate-50/50 border-t border-slate-50">
+                                <div class="text-[14px] text-slate-500 leading-relaxed">
+                                    매칭 확정 전에는 '매칭 상세' 페이지에서 자유롭게 취소가 가능합니다. 다만, 확정 후 취소 시에는 매너 온도에 영향을 줄 수 있으니 유의해주세요.
                                 </div>
                             </div>
                         </div>
 
-                        <!-- FAQ 아이템 2 -->
-                        <div class="faq-item bg-white p-7 rounded-[2.5rem] border border-slate-100 shadow-sm cursor-pointer transition-all" onclick="toggleFaq(this)">
-                            <div class="flex justify-between items-center gap-4">
-                                <div class="flex gap-4 items-center flex-1">
-                                    <span class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm shrink-0">Q</span>
-                                    <p class="text-[16px] font-bold text-slate-800 leading-snug">결제는 어떤 방식으로 진행되나요?</p>
-                                </div>
-                                <div class="p-1.5 bg-slate-50 rounded-full">
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
-                                </div>
-                            </div>
-                            <div class="faq-answer">
-                                <div class="flex gap-4 pl-12 border-t border-slate-50 pt-3"> <!-- pt-5에서 pt-3으로 상단 간격 축소 -->
-                                    <div class="text-[14px] text-slate-500 leading-relaxed">
-                                        목적지 도착 후 정산하기 버튼을 누르면 전체 요금에서 인원수만큼 나눈 금액이 사전에 등록하신 카드로 자동 결제됩니다. 별도의 현금 거래가 필요 없어 안전합니다.
-                                    </div>
+                        <div class="faq-item bg-white border border-slate-100 rounded-[1.5rem] overflow-hidden">
+                            <button onclick="toggleFaq(this.parentElement)" class="w-full p-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                                <span class="text-sm font-bold text-slate-800">결제는 언제 이루어지나요?</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-answer hidden p-5 pt-0 bg-slate-50/50 border-t border-slate-50">
+                                <div class="text-[14px] text-slate-500 leading-relaxed">
+                                    목적지 도착 후 정산하기 버튼을 누르면 전체 요금에서 인원수만큼 나눈 금액이 사전에 등록하신 카드로 자동 결제됩니다. 별도의 현금 거래가 필요 없어 안전합니다.
                                 </div>
                             </div>
                         </div>
@@ -190,7 +136,7 @@
     </div>
 
     <script>
-        // 사이드바 로드
+        // 사이드바 로드 (activeId: 'nav-notice')
         if (typeof loadNavbar === 'function') {
             loadNavbar("nav-notice");
         }
@@ -200,10 +146,15 @@
         // 탭 전환
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'text-indigo-600', 'border-indigo-600');
+                el.classList.add('border-transparent');
+            });
 
             document.getElementById(`content-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.add('active', 'text-indigo-600', 'border-indigo-600');
+            activeBtn.classList.remove('border-transparent');
             
             lucide.createIcons();
         }
