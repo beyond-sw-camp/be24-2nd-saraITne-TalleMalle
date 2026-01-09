@@ -91,3 +91,10 @@ function toggleNotification(event) {
     }
   }
 }
+
+function handleLogout() {
+        if(confirm("로그아웃 하시겠습니까?")) {
+            localStorage.removeItem("tm_user");
+            location.href = "../auth/login.html";
+        }
+    }

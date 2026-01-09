@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,11 +61,13 @@
         .notification-item.read {
             opacity: 0.6;
         }
+
         .notification-item.read .unread-dot {
             display: none;
         }
     </style>
 </head>
+
 <body class="overflow-hidden">
     <div class="flex h-screen p-4 gap-4">
         <!-- 네비게이션 바 컨테이너 -->
@@ -79,7 +82,8 @@
                         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">알림 센터</h1>
                         <p class="text-sm text-slate-400 font-medium mt-2">새로운 소식과 활동 내역을 확인하세요.</p>
                     </div>
-                    <button onclick="markAllAsRead()" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors">
+                    <button onclick="markAllAsRead()"
+                        class="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors">
                         모두 읽음 처리
                     </button>
                 </div>
@@ -88,33 +92,42 @@
             <!-- 알림 필터 탭 -->
             <div class="px-10 py-4 bg-white/50 border-b border-slate-50">
                 <div class="max-w-4xl mx-auto flex gap-6" id="filter-container">
-                    <button onclick="filterNotifications('all', this)" class="filter-btn active text-sm font-bold pb-2 transition-all">전체</button>
-                    <button onclick="filterNotifications('matching', this)" class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">매칭</button>
-                    <button onclick="filterNotifications('payment', this)" class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">결제</button>
-                    <button onclick="filterNotifications('event', this)" class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">이벤트</button>
+                    <button onclick="filterNotifications('all', this)"
+                        class="filter-btn active text-sm font-bold pb-2 transition-all">전체</button>
+                    <button onclick="filterNotifications('matching', this)"
+                        class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">매칭</button>
+                    <button onclick="filterNotifications('payment', this)"
+                        class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">결제</button>
+                    <button onclick="filterNotifications('event', this)"
+                        class="filter-btn text-sm font-medium text-slate-400 hover:text-slate-600 pb-2 transition-all">이벤트</button>
                 </div>
             </div>
 
             <!-- 알림 리스트 영역 -->
             <div class="flex-1 overflow-y-auto custom-scroll p-10 pt-6">
                 <div class="max-w-4xl mx-auto w-full space-y-3" id="notification-list">
-                    
+
                     <!-- 오늘 알림 -->
                     <div class="mb-6 date-group" id="group-today">
                         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">오늘</h2>
                         <div class="space-y-3">
                             <!-- 동승자 입장 알림 (매칭 카테고리) -->
-                            <div data-category="matching" onclick="markAsRead(this)" class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
+                            <div data-category="matching" onclick="markAsRead(this)"
+                                class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
                                 <div class="unread-dot"></div>
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                                    <div
+                                        class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
                                         <i data-lucide="user-plus" class="w-5 h-5"></i>
                                     </div>
                                     <div class="flex-1">
                                         <div class="flex justify-between items-start">
                                             <div>
-                                                <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-tight">동승자 입장</span>
-                                                <h3 class="font-bold text-slate-800 mt-0.5"><span class="text-indigo-600">박지민</span>님이 파티에 입장했습니다.</h3>
+                                                <span
+                                                    class="text-[10px] font-bold text-indigo-500 uppercase tracking-tight">동승자
+                                                    입장</span>
+                                                <h3 class="font-bold text-slate-800 mt-0.5"><span
+                                                        class="text-indigo-600">박지민</span>님이 파티에 입장했습니다.</h3>
                                             </div>
                                             <span class="text-[11px] text-slate-300">방금 전</span>
                                         </div>
@@ -124,16 +137,19 @@
                             </div>
 
                             <!-- 이벤트 알림 -->
-                            <div data-category="event" onclick="markAsRead(this)" class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
+                            <div data-category="event" onclick="markAsRead(this)"
+                                class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
                                 <div class="unread-dot"></div>
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0">
+                                    <div
+                                        class="w-10 h-10 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0">
                                         <i data-lucide="gift" class="w-5 h-5"></i>
                                     </div>
                                     <div class="flex-1">
                                         <div class="flex justify-between items-start">
                                             <div>
-                                                <span class="text-[10px] font-bold text-pink-500 uppercase tracking-tight">이벤트</span>
+                                                <span
+                                                    class="text-[10px] font-bold text-pink-500 uppercase tracking-tight">이벤트</span>
                                                 <h3 class="font-bold text-slate-800 mt-0.5">벚꽃 시즌 한정! 무료 탑승권 도착 🌸</h3>
                                             </div>
                                             <span class="text-[11px] text-slate-300">5분 전</span>
@@ -144,10 +160,12 @@
                             </div>
 
                             <!-- 매칭 성공 알림 -->
-                            <div data-category="matching" onclick="markAsRead(this)" class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
+                            <div data-category="matching" onclick="markAsRead(this)"
+                                class="notification-item relative bg-white p-6 pl-10 rounded-[2rem] border border-slate-100 shadow-sm cursor-pointer group">
                                 <div class="unread-dot"></div>
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                                    <div
+                                        class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
                                         <i data-lucide="car" class="w-5 h-5"></i>
                                     </div>
                                     <div class="flex-1">
@@ -155,7 +173,8 @@
                                             <h3 class="font-bold text-slate-800">매칭이 완료되었습니다!</h3>
                                             <span class="text-[11px] text-slate-300">15분 전</span>
                                         </div>
-                                        <p class="text-sm text-slate-500 mt-1">강남역 → 판교역 동승 매칭이 성공했습니다. 드라이버 정보를 확인하세요.</p>
+                                        <p class="text-sm text-slate-500 mt-1">강남역 → 판교역 동승 매칭이 성공했습니다. 드라이버 정보를 확인하세요.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -167,9 +186,11 @@
                         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">어제</h2>
                         <div class="space-y-3">
                             <!-- 결제 완료 알림 -->
-                            <div data-category="payment" onclick="markAsRead(this)" class="notification-item bg-white/60 p-6 rounded-[2rem] border border-slate-50 shadow-sm cursor-pointer group">
+                            <div data-category="payment" onclick="markAsRead(this)"
+                                class="notification-item bg-white/60 p-6 rounded-[2rem] border border-slate-50 shadow-sm cursor-pointer group">
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                                    <div
+                                        class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
                                         <i data-lucide="credit-card" class="w-5 h-5"></i>
                                     </div>
                                     <div class="flex-1">
@@ -177,7 +198,8 @@
                                             <h3 class="font-bold text-slate-800">정산이 완료되었습니다.</h3>
                                             <span class="text-[11px] text-slate-300">어제</span>
                                         </div>
-                                        <p class="text-sm text-slate-500 mt-1">어제 이용하신 여정의 요금 4,500원이 등록된 카드로 결제되었습니다.</p>
+                                        <p class="text-sm text-slate-500 mt-1">어제 이용하신 여정의 요금 4,500원이 등록된 카드로 결제되었습니다.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +207,7 @@
                     </div>
 
                 </div>
-                
+
                 <!-- 검색 결과 없음 메시지 -->
                 <div id="no-notifications" class="hidden flex flex-col items-center justify-center py-20">
                     <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
@@ -201,7 +223,7 @@
         if (typeof loadNavbar === 'function') {
             loadNavbar("nav-notifications");
         }
-        
+
         lucide.createIcons();
 
         // 개별 읽음 처리 함수
@@ -250,6 +272,8 @@
                 noNoti.classList.add('hidden');
             }
         }
+
     </script>
 </body>
+
 </html>

@@ -420,13 +420,6 @@
   </div>
 
   <script>
-    function handleLogout() {
-        if(confirm("로그아웃 하시겠습니까?")) {
-            localStorage.removeItem("tm_user");
-            location.href = "../auth/login.html";
-        }
-    }
-
     const panel = document.getElementById('side-panel-wrapper');
     const handle = document.getElementById('dragHandle');
     let isMobile = () => window.innerWidth <= 768;
