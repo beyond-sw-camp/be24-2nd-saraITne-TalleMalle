@@ -24,6 +24,7 @@ const isPanelOpen = ref(false)
 const displayRoute = ref('경로 미지정')
 const isSocketConnected = ref(false)
 const recruitList = ref([])
+const visibleRecruitIds = ref([]);
 const selectedRecruit = ref(null)
 const isDetailOpen = ref(false)
 const isCreateModalOpen = ref(false)
@@ -47,10 +48,18 @@ const handleLocationUpdate = (coords) => {
 
 // --- 소켓 로직 ---
 const connectWebSocket = () => {
-    const wsUrl = `ws://127.0.0.1:8080/ws?userId=${encodeURIComponent(authStore.user.id)}`
+    const wsUrl = `ws://127.0.0.1:8080/ws/chat?userId=${encodeURIComponent(authStore.user.id)}`
     ws = new WebSocket(wsUrl)
-    ws.onopen = () => isSocketConnected.value = true
-    ws.onclose = () => isSocketConnected.value = false
+    ws.onopen = () => {
+        // 소켓 연결 확인용
+        console.log("Socket Connected");
+        isSocketConnected.value = true
+    }
+    ws.onclose = () => {
+        // 소켓 연결 끊어짐 확인용
+        console.log("Socket disConnected")
+        isSocketConnected.value = false
+    }
     ws.onmessage = (event) => {
         try {
             const data = JSON.parse(event.data)
@@ -65,25 +74,31 @@ const connectWebSocket = () => {
 
 const fetchRecruits = () => {
     recruitList.value = [
-        { id: 1, start: '강남역 2번 출구', dest: '판교역', time: '10분 후', cur: 1, max: 4, tags: ['#비흡연', '#조용히'], desc: '칼퇴하고 가실 분 구합니다.' },
-        { id: 2, start: '합정역', dest: '일산 호수공원', time: '지금 바로', cur: 3, max: 4, tags: ['#짐있음'], desc: '트렁크 자리 좀 필요해요.' }
+        { id: 1, start: '강남역 2번 출구', startLat: 37.498095, startLng: 127.027610, dest: '판교역', time: '10분 후', cur: 1, max: 4, tags: ['#비흡연', '#조용히'], desc: '칼퇴하고 가실 분 구합니다.' },
+        { id: 2, start: '합정역', startLat: 37.548925, startLng: 126.913501, dest: '일산 호수공원', time: '지금 바로', cur: 3, max: 4, tags: ['#짐있음'], desc: '트렁크 자리 좀 필요해요.' }
     ]
 }
 
 const handleSelectRecruit = (recruit) => {
+    // 패널 열기 로직
     if (isDetailOpen.value && selectedRecruit.value?.id === recruit.id) {
         isDetailOpen.value = false
         selectedRecruit.value = null
     } else {
         selectedRecruit.value = recruit
         isDetailOpen.value = true
+
+        // 지도를 해당 모집글의 출발지 좌표를 이동시키기
+        if (mapComponent.value && recruit.startLat && recruit.startLng) {
+            mapComponent.value.moveToLocation(recruit.startLat, recruit.startLng)
+        }
     }
 }
 
 const bottomBarClass = computed(() => {
     return isDetailOpen.value
-        ? 'left-4 md:left-[860px]'  // 상세 패널이 열렸을 때 (오른쪽으로 밀림)
-        : 'left-4 md:left-[440px]'  // 닫혔을 때 (기본 위치)
+        ? 'left-4 md:left-[920px]'  // 상세 패널이 열렸을 때 (오른쪽으로 밀림)
+        : 'left-4 md:left-[500px]'  // 닫혔을 때 (기본 위치)
 })
 
 const handleCreateSubmit = (formData) => {
@@ -106,18 +121,48 @@ const zoomIn = () => mapComponent.value?.zoomIn()
 const zoomOut = () => mapComponent.value?.zoomOut()
 const moveToCurrentLocation = () => mapComponent.value?.panToCurrent()
 
+// 지도에서 보이는 ID 목록을 업데이트 하는 함수
+const handleVisibleListUpdate = (ids) => {
+    visibleRecruitIds.value = ids
+}
+
+// 실제로 리스트 패널에 보여줄 데이터
+// 전체 리스트 중에서 visbleRecruitIds에 포함된 것만 필터링
+const displayRecruitList = computed(() => {
+    // 만약 지도가 아직 로드가 안 됐거나 ID 목록이 비어있으면
+    // if (visibleRecruitIds.value.length === 0) {
+    //     // 처음에는 전체를 보여줌
+    //     return recruitList.value
+    // }
+
+    return recruitList.value.filter(item => visibleRecruitIds.value.includes(item.id))
+})
+
+// [추가] 지도 중심 오프셋 계산 (Computed)
+const mapCenterOffset = computed(() => {
+    // 모바일(768px 미만)에서는 오프셋 없음 (화면 전체 사용하거나 바텀시트라서)
+    if (window.innerWidth < 768) return 0
+
+    // 상세 패널 열림: 왼쪽 880px 가량 가려짐 -> 440px 이동
+    if (isDetailOpen.value) return 440
+
+    // 기본 상태: 왼쪽 460px 가량 가려짐 -> 230px 이동
+    return 230
+})
+
 </script>
 
 <template>
     <div class="relative w-full h-full">
 
-        <Map ref="mapComponent" @update-location="handleLocationUpdate" />
+        <Map ref="mapComponent" :recruit-list="recruitList" :center-offset="mapCenterOffset"
+            @update-location="handleLocationUpdate" @marker-click="handleSelectRecruit"
+            @update-visible-list="handleVisibleListUpdate" />
 
         <div class="absolute inset-0 z-10 flex p-4 pointer-events-none">
 
             <div class="hidden md:block w-20 shrink-0 mr-4"></div>
-
-            <RecruitListPanel :recruit-list="recruitList" :is-open="true" :selected-id="selectedRecruit?.id"
+            <RecruitListPanel :recruit-list="displayRecruitList" :is-open="true" :selected-id="selectedRecruit?.id"
                 :is-socket-connected="isSocketConnected" @expand="isPanelOpen = true" @select="handleSelectRecruit" />
 
             <RecruitDetailPanel :recruit="selectedRecruit" :is-open="isDetailOpen" @close="isDetailOpen = false"
