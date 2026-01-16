@@ -35,13 +35,12 @@ const isFormValid = computed(() => {
   const isNameValid = signupForm.name.trim().length > 0;
 
   // 3. 비밀번호 복잡도 확인
-  const hasUpper = /[A-Z]/.test(signupForm.password);
   const hasLower = /[a-z]/.test(signupForm.password);
   const hasNumber = /[0-9]/.test(signupForm.password);
   const hasSpecial = /[!@$]/.test(signupForm.password);
   const isLenValid = signupForm.password.length >= 8;
   
-  const isPasswordValid = hasUpper && hasLower && hasNumber && hasSpecial && isLenValid;
+  const isPasswordValid = hasLower && hasNumber && hasSpecial && isLenValid;
 
   // 4. 비밀번호 일치 확인
   const isConfirmValid = signupForm.password === passwordConfirm.value && passwordConfirm.value !== '';
@@ -76,7 +75,6 @@ const nameRules = () => {
 };
 
 const passwordRules = () => {
-  const hasUpper = /[A-Z]/.test(signupForm.password);
   const hasLower = /[a-z]/.test(signupForm.password);
   const hasNumber = /[0-9]/.test(signupForm.password);
   const hasSpecial = /[!@$]/.test(signupForm.password);
@@ -84,8 +82,8 @@ const passwordRules = () => {
   if (signupForm.password.length < 8) {
     signupInputError.password.errorMessage = '패스워드는 8글자 이상 입력해야합니다.';
     signupInputError.password.isValid = false;
-  } else if (!(hasUpper && hasLower && hasNumber && hasSpecial)) {
-    signupInputError.password.errorMessage = '비밀번호는 영문 대문자, 소문자, 숫자, 특수문자(!@$)를 모두 포함해야합니다.';
+  } else if (!(hasLower && hasNumber && hasSpecial)) {
+    signupInputError.password.errorMessage = '비밀번호는 영문 소문자, 숫자, 특수문자(!@$)를 모두 포함해야합니다.';
     signupInputError.password.isValid = false;
   } else {
     signupInputError.password.errorMessage = '';
@@ -170,7 +168,7 @@ const signup = async () => {
         <!-- 2. 이름 입력 -->
         <div class="input-group">
           <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">
-            이름
+            닉네임
           </label>
           <div class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl transition-all input-focus-within">
             <input 
