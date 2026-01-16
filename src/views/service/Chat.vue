@@ -75,7 +75,7 @@ onUnmounted(() => {
 })
 
 const connectWebSocket = () => {
-    const wsUri = "ws://54.180.30.27:8080/ws/chat"
+    const wsUri = "ws://localhost:8080/ws/chat"
     socket = new WebSocket(wsUri)
 
     socket.addEventListener('open', () => {
