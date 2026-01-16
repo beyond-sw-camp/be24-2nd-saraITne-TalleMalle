@@ -73,7 +73,7 @@ const passwordRules = () => {
   const hasSpecial = /[!@$]/.test(loginForm.password)
 
   if (!(hasLowerLetter && hasNumber)) {
-    loginInputError.password.errorMessage = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야합니다.'
+    loginInputError.password.errorMessage = '비밀번호는 영문 소문자, 숫자, 특수문자를 모두 포함해야합니다.'
     loginInputError.password.isValid = false
 
     return false
@@ -113,7 +113,7 @@ const handleLogin = async () => {
     authStore.login(res.data)
     alert('로그인되었습니다.')
     router.push('/main')
-    console.log(authStore.user)
+    // console.log(authStore.user)
   } else {
     alert('아이디와 비밀번호를 확인해보세요.')
   }
@@ -135,12 +135,10 @@ const loginWithGoogle = () => {
 </script>
 
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 font-sans"
-  >
-    <div
-      class="bg-white w-full max-w-md rounded-[24px] shadow-xl overflow-hidden relative border border-white/50"
-    >
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 font-sans">
+    <div class="bg-white w-full max-w-md rounded-[24px] shadow-xl overflow-hidden relative border border-white/50">
+        
+      <!-- 상단 헤더 -->
       <div class="p-8 pb-4 flex flex-col items-center text-center">
         <div class="flex items-center gap-2 mb-6">
           <div class="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-100">
@@ -152,12 +150,16 @@ const loginWithGoogle = () => {
         <p class="text-slate-500 mt-2 text-sm">함께 탈 파트너가 기다리고 있어요.</p>
       </div>
 
+      <!-- 로그인 폼 -->
       <form @submit.prevent="handleLogin" class="px-8 py-4 space-y-4">
+
+        <!-- 이메일 입력 -->
         <div
           class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all"
         >
           <Mail class="absolute left-4 w-5 h-5 text-slate-400" />
           <input
+            :class="loginInputError.email.isValid ? '' : 'inputError'" @blur="emailRules()"
             v-model="loginForm.email"
             type="email"
             placeholder="이메일 주소"
@@ -165,6 +167,7 @@ const loginWithGoogle = () => {
           />
         </div>
 
+        <!-- 비밀번호 입력 -->
         <div class="space-y-1">
           <div
             class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all"
@@ -177,6 +180,8 @@ const loginWithGoogle = () => {
               class="w-full pl-12 pr-4 py-4 bg-transparent outline-none text-sm placeholder:text-slate-400"
             />
           </div>
+
+          <!-- 비밀번호 찾기 -->
           <div class="flex justify-end">
             <router-link
               to="/findpassword"
@@ -187,6 +192,7 @@ const loginWithGoogle = () => {
           </div>
         </div>
 
+        <!-- 로그인 버튼 -->
         <button
           type="submit"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all mt-2 active:scale-[0.98]"
@@ -194,6 +200,8 @@ const loginWithGoogle = () => {
           로그인하기
         </button>
 
+
+        <!-- 구분선 -->
         <div class="mt-8 space-y-4">
           <div class="relative flex justify-center text-xs uppercase">
             <span class="bg-white px-3 text-slate-400 font-medium relative z-10"
@@ -204,6 +212,7 @@ const loginWithGoogle = () => {
             </div>
           </div>
 
+          <!-- 구글 로그인 -->
           <div class="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -218,6 +227,7 @@ const loginWithGoogle = () => {
               <span class="text-sm font-semibold text-slate-600">Google</span>
             </button>
 
+            <!-- 카카오 로그인 -->
             <button
               type="button"
               @click="loginWithKakao"
@@ -232,6 +242,7 @@ const loginWithGoogle = () => {
         </div>
       </form>
 
+      <!-- 하단 안내 -->
       <div class="p-8 pt-4 text-center">
         <p class="text-sm text-slate-500">
           아직 회원이 아니신가요?
