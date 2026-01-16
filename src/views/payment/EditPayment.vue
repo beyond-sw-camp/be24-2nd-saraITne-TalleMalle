@@ -1,10 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { CreditCard, X, ShieldCheck, Check } from 'lucide-vue-next'
+import LabeledInput from '@/components/Input/LabeledInput.vue'
 
 // 카드 정보
 const cardNum = ref({ p1: '', p2: '', p3: '', p4: '' })
-const expiry = ref('')
+const expiry = reactive({
+  month: '',
+  year: '',
+})
 const cvc = ref('')
 const ownerName = ref('')
 
@@ -16,24 +20,37 @@ const displayCardNum = computed(() => {
   return `${n.p1.padEnd(4, '•')} ${n.p2 ? '••••' : '••••'} ${n.p3 ? '••••' : '••••'} ${n.p4.padEnd(4, '•')}`
 })
 
-const handleInput = (part, event, nextRefStr) => {
-  let val = event.target.value.replace(/\D/g, '')
+const handleCardNum = (part, event, next) => {
+  let val = event.target.value
   cardNum.value[part] = val
-  if (val.length === 4 && nextRefStr) {
-    document.getElementById(nextRefStr)?.focus()
+  if (val.length === 4 && next) {
+    document.getElementById(next)?.focus()
   }
 }
 
-const handleExpiry = (e) => {
-  let val = e.target.value.replace(/\D/g, '')
-  if (val.length >= 2) {
-    val = val.substring(0, 2) + ' / ' + val.substring(2, 4)
+const handleExpiry = (event, next) => {
+  let val = event.target.value
+
+  if (val.length === 2 && next) {
+    document.getElementById(next)?.focus()
   }
-  expiry.value = val
+}
+
+const handleCvc = (event, next) => {
+  let val = event.target.value
+  if (val.length === 3 && next) {
+    document.getElementById(next)?.focus()
+  }
 }
 
 const handleSubmit = () => {
-  if (cardNum.value.p1.length < 4 || !expiry.value || !cvc.value || !ownerName.value) {
+  if (
+    cardNum.value.p1.length < 4 ||
+    expiry.month.length < 2 ||
+    expiry.year.length < 2 ||
+    cvc.value.length < 3 ||
+    !ownerName.value
+  ) {
     alert('모든 정보를 입력해주세요.')
     return
   }
@@ -87,7 +104,9 @@ const handleClose = () => {
                 </div>
                 <div class="text-right">
                   <p class="text-[7px] uppercase tracking-wider opacity-60">Expires</p>
-                  <p class="text-[10px] font-bold">{{ expiry || 'MM/YY' }}</p>
+                  <p class="text-[10px] font-bold">
+                    {{ `${expiry.month}/${expiry.year}` || 'MM/YY' }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -100,79 +119,84 @@ const handleClose = () => {
 
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div class="space-y-1.5">
-          <label class="text-[11px] font-bold text-slate-500 ml-1">카드 번호</label>
-          <div class="grid grid-cols-4 gap-2">
-            <input
+          <div class="grid grid-cols-4 gap-2 items-end">
+            <LabeledInput
+              id="p1"
               v-model="cardNum.p1"
-              @input="handleInput('p1', $event, 'p2')"
-              type="text"
-              maxlength="4"
-              class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
+              label="카드 번호"
               placeholder="0000"
+              filterType="numeric"
+              :length="{ max: 4 }"
+              @input="handleCardNum('p1', $event, 'p2')"
             />
-            <input
-              v-model="cardNum.p2"
-              @input="handleInput('p2', $event, 'p3')"
-              type="password"
-              maxlength="4"
+            <LabeledInput
               id="p2"
-              class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
-              placeholder="****"
+              v-model="cardNum.p2"
+              label=""
+              placeholder="***"
+              filterType="numeric"
+              :length="{ max: 4 }"
+              @input="handleCardNum('p2', $event, 'p3')"
             />
-            <input
-              v-model="cardNum.p3"
-              @input="handleInput('p3', $event, 'p4')"
-              type="password"
-              maxlength="4"
+            <LabeledInput
               id="p3"
-              class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
+              v-model="cardNum.p3"
+              label=""
               placeholder="****"
+              filterType="numeric"
+              :length="{ max: 4 }"
+              @input="handleCardNum('p3', $event, 'p4')"
             />
-            <input
-              v-model="cardNum.p4"
-              @input="handleInput('p4', $event, null)"
-              type="text"
-              maxlength="4"
+            <LabeledInput
               id="p4"
-              class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
+              v-model="cardNum.p4"
+              label=""
               placeholder="0000"
+              filterType="numeric"
+              :length="{ max: 4 }"
+              @input="handleCardNum('p4', $event, 'expiryMonth')"
             />
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-500 ml-1">유효기간</label>
-            <input
-              :value="expiry"
-              @input="handleExpiry"
-              type="text"
-              maxlength="7"
-              class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
-              placeholder="MM / YY"
-            />
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-500 ml-1">CVC</label>
-            <input
-              v-model="cvc"
-              type="password"
-              maxlength="3"
-              class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
-              placeholder="3자리"
-            />
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-[11px] font-bold text-slate-500 ml-1">카드 소유주 성명</label>
-          <input
-            v-model="ownerName"
-            type="text"
-            class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 text-xs"
-            placeholder="이름을 입력하세요"
+        <div class="grid grid-cols-4 gap-3 items-end">
+          <LabeledInput
+            id="expiryMonth"
+            v-model="expiry.month"
+            label="유효 기간"
+            placeholder="MM"
+            filterType="numeric"
+            :length="{ max: 2 }"
+            @input="handleExpiry($event, 'expiryYear')"
+          />
+          <LabeledInput
+            id="expiryYear"
+            v-model="expiry.year"
+            label=""
+            placeholder="YY"
+            filterType="numeric"
+            :length="{ max: 2 }"
+            @input="handleExpiry($event, 'cvc')"
+          />
+          <LabeledInput
+            class="col-span-2"
+            id="cvc"
+            v-model="cvc"
+            label="CVC"
+            placeholder="3자리"
+            filterType="numeric"
+            :length="{ max: 3 }"
+            @input="handleCvc($event, 'ownerName')"
           />
         </div>
+
+        <LabeledInput
+          id="ownerName"
+          v-model="ownerName"
+          label="카드 소유주 성명"
+          placeholder="이름을 입력하세요"
+          filterType="text-only"
+        />
 
         <div class="p-3 bg-slate-50 rounded-xl flex items-start gap-2">
           <ShieldCheck class="w-3.5 h-3.5 text-slate-400 mt-0.5" />
