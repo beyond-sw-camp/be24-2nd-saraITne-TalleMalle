@@ -2,7 +2,7 @@
 import { ref, reactive, computed } from 'vue'
 import { CreditCard, X, ShieldCheck, Check } from 'lucide-vue-next'
 import LabeledInput from '@/components/Input/LabeledInput.vue'
-
+import RoundBox from '@/components/layout/RoundBox.vue'
 // 카드 정보
 const cardNum = ref({ p1: '', p2: '', p3: '', p4: '' })
 const expiry = reactive({
@@ -64,12 +64,11 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div
-    class="bg-white/90 backdrop-blur w-full max-w-md rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden flex flex-col h-[85vh] md:h-auto"
+  <RoundBox
+    padding="0"
+    class="flex flex-col max-h-[90vh] w-full overflow-hidden shadow-2xl border-none"
   >
-    <div
-      class="px-6 py-5 border-b border-slate-50 flex justify-between items-center bg-white/50 sticky top-0 z-20"
-    >
+    <RoundBox>
       <div class="flex items-center gap-2.5">
         <div class="p-1.5 bg-indigo-50 rounded-lg">
           <CreditCard class="w-4 h-4 text-indigo-600" />
@@ -79,9 +78,9 @@ const handleClose = () => {
       <button @click="handleClose" class="p-1.5 hover:bg-slate-100 rounded-full transition-colors">
         <X class="w-4 h-4 text-slate-400" />
       </button>
-    </div>
+    </RoundBox>
 
-    <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
+    <RoundBox>
       <div class="flex justify-center">
         <div
           class="w-full max-w-[280px] aspect-[1.58/1] rounded-[1rem] p-5 text-white shadow-lg relative overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-600"
@@ -205,7 +204,7 @@ const handleClose = () => {
           </p>
         </div>
       </form>
-    </div>
+    </RoundBox>
 
     <div class="px-6 py-6 bg-white border-t border-slate-50 flex gap-2.5">
       <button
@@ -221,5 +220,5 @@ const handleClose = () => {
         카드 등록
       </button>
     </div>
-  </div>
+  </RoundBox>
 </template>
