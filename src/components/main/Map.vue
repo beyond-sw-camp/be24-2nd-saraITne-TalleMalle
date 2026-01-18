@@ -3,10 +3,12 @@ import { ref, onMounted, watch } from 'vue' // [중요] watch 필수!
 
 // 부모(Main.vue)에게 받는 데이터
 const props = defineProps({
-    recruitList: { type: Array, default: () => [] }
+    recruitList: { type: Array, default: () => [] },
+    // 중심 이동 오프셋 (px 단위)
+    centerOffset: { type: Number, default: 0 }
 })
 
-const emit = defineEmits(['update-location', 'marker-click'])
+const emit = defineEmits(['update-location', 'marker-click', 'update-visible-list'])
 
 const mapContainer = ref(null)
 const mapInstance = ref(null)
@@ -28,6 +30,9 @@ onMounted(() => {
 
             initGeolocation()
 
+            window.kakao.maps.event.addListener(mapInstance.value, 'idle', () => {
+                updateVisibleMarkers()
+            })
             // 처음 로드될 때 데이터가 있으면 마커 찍기
             if (props.recruitList.length > 0) {
                 updateRecruitMarkers()
@@ -36,10 +41,70 @@ onMounted(() => {
     }
 })
 
+// [핵심 기능] 오프셋을 적용한 좌표 이동 함수
+const moveWithOffset = (targetLat, targetLng) => {
+    if (!mapInstance.value || !targetLat || !targetLng) return
+
+    const map = mapInstance.value
+    const targetPosition = new window.kakao.maps.LatLng(targetLat, targetLng)
+
+    // 오프셋이 없으면 그냥 이동
+    if (props.centerOffset === 0) {
+        map.panTo(targetPosition)
+        return
+    }
+
+    // [카카오 지도 Projection 사용]
+    // 1. 위도/경도를 화면상의 픽셀 좌표(Point)로 변환
+    const projection = map.getProjection()
+    const targetPoint = projection.pointFromCoords(targetPosition)
+
+    // 2. 오프셋만큼 중심점을 왼쪽(-)으로 이동
+    // (지도의 중심을 왼쪽으로 옮겨야, 우리가 원하는 타겟 마커가 화면 오른쪽에 옴)
+    const newCenterPoint = new window.kakao.maps.Point(
+        targetPoint.x - props.centerOffset,
+        targetPoint.y
+    )
+
+    // 3. 다시 픽셀 좌표를 위도/경도로 변환
+    const newCenterPosition = projection.coordsFromPoint(newCenterPoint)
+
+    // 4. 이동
+    map.panTo(newCenterPosition)
+}
+
 // [핵심] recruitList가 변하면(글이 추가되면) 마커를 다시 그립니다.
 watch(() => props.recruitList, () => {
     updateRecruitMarkers()
 }, { deep: true })
+
+const updateVisibleMarkers = () => {
+    if (!mapInstance.value || recruitMarkers.value.length === 0) {
+        return
+    }
+
+    // 현재 지도의 영역(Bounds) 가져오기
+    const bounds = mapInstance.value.getBounds()
+    // 화면에 보이는 모집글 ID들을 담을 배열
+    const visibleIds = []
+
+    recruitMarkers.value.forEach(marker => {
+        // 마커의 위치가 현재 영역 안에 있는지 확인 (카카오 API 제공)
+        if (bounds.contain(marker.getPosition())) {
+            // 영역 밖이면 숨기기
+            marker.setMap(mapInstance.value)
+            // 보이는 마커의 ID를 배열에 추가
+            if (marker.recruitId) {
+                visibleIds.push(marker.recruitId)
+            }
+        } else {
+            // 영역 밖이면 숨기기
+            marker.setMap(null)
+        }
+    })
+
+    emit('update-visible-list', visibleIds)
+}
 
 // --- 모집글 마커 업데이트 함수 ---
 const updateRecruitMarkers = () => {
@@ -73,15 +138,17 @@ const updateRecruitMarkers = () => {
         })
 
         const overlay = new window.kakao.maps.CustomOverlay({
-            map: mapInstance.value,
             position: loc,
             content: content,
             yAnchor: 1,
             zIndex: 50
         })
 
+        overlay.recruitId = recruit.id
+
         recruitMarkers.value.push(overlay)
     })
+    updateVisibleMarkers()
 }
 
 // --- 내 위치 및 지도 제어 함수들 (기존 유지) ---
@@ -109,25 +176,23 @@ const updateMyMarker = () => {
             yAnchor: 0.5,
             zIndex: 100
         })
-        mapInstance.value.panTo(loc)
+        moveWithOffset(lat.value, lng.value)
     } else {
         myMarker.value.setPosition(loc)
     }
 }
 
+// 줌 인 버튼
 const zoomIn = () => mapInstance.value?.setLevel(mapInstance.value.getLevel() - 1)
+// 줌 아웃 버튼
 const zoomOut = () => mapInstance.value?.setLevel(mapInstance.value.getLevel() + 1)
+// 내 위치로 이동 버튼
 const panToCurrent = () => {
-    if (mapInstance.value) {
-        mapInstance.value.panTo(new window.kakao.maps.LatLng(lat.value, lng.value))
-    }
+    moveWithOffset(lat.value, lng.value)
 }
 
 const moveToLocation = (targetLat, targetLng) => {
-    if (mapInstance.value && targetLat && targetLng) {
-        const loc = new window.kakao.maps.LatLng(targetLat, targetLng)
-        mapInstance.value.panTo(loc)
-    }
+    moveWithOffset(targetLat, targetLng)
 }
 
 defineExpose({ zoomIn, zoomOut, panToCurrent, moveToLocation })
