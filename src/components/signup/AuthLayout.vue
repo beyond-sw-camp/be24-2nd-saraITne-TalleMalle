@@ -1,5 +1,12 @@
 <script setup>
-    import { CarFront } from 'lucide-vue-next' // Lucide 아이콘
+import { CarFront } from 'lucide-vue-next' // Lucide 아이콘
+defineProps({
+  // 푸터 배경색을 없애고 싶을 때 true로 전달
+  noFooterBackground: {
+    type: Boolean,
+    default: false,
+  },
+})
 </script>
 
 <template>
@@ -16,7 +23,14 @@
       </div>
 
       <slot></slot>
-      <div class="p-6 bg-slate-50 text-center border-t border-slate-100">
+      <div 
+        class="p-6 text-center"
+        :class="[
+          noFooterBackground 
+            ? 'bg-transparent border-none' 
+            : 'bg-slate-50 border-t border-slate-100'
+        ]"
+      >
         <slot name="footer"></slot>
       </div>
     </div>
@@ -39,7 +53,7 @@
   border-radius: 24px;
   box-shadow: 0 10px 40px rgba(30, 27, 75, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 448px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.5);
 }

@@ -14,21 +14,29 @@ onMounted(() => {
     script.onload = () => {
       if (!window.Kakao.isInitialized()) {
         window.Kakao.init(KAKAO_API_KEY)
+      }
     }
     document.head.appendChild(script)
   }
 })
 
 const loginWithKakao = () => {
-  if (window.Kakao?.isInitialized()) {
+  if (window.Kakao && window.Kakao.isInitialized()) {
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:5173/auth/kakao/callback',
+      redirectUri: 'http://localhost:5173/auth/kakao/callback', // 로컬 개발 환경용 리다이렉트 URI
     })
+  } else {
+    alert('카카오 SDK가 아직 로드되지 않았습니다.')
   }
+}
+
+const loginWithGoogle = () => {
+  alert('구글 로그인은 서버 설정이 필요합니다.')
 }
 </script>
 
 <template>
+  <!-- 구분선 -->
   <div class="mt-8 space-y-4">
     <div class="relative flex justify-center text-xs uppercase">
       <span class="bg-white px-3 text-slate-400 font-medium relative z-10">또는 간편 로그인</span>
@@ -38,9 +46,10 @@ const loginWithKakao = () => {
     </div>
 
     <div class="grid grid-cols-2 gap-3">
+      <!-- 구글 로그인 -->
       <button
         type="button"
-        @click="$emit('login-google')"
+        @click="loginWithGoogle"
         class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-95"
       >
         <img
@@ -51,6 +60,7 @@ const loginWithKakao = () => {
         <span class="text-sm font-semibold text-slate-600">Google</span>
       </button>
 
+      <!-- 카카오 로그인 -->
       <button
         type="button"
         @click="loginWithKakao"

@@ -1,6 +1,7 @@
 <script setup>
-defineProps(['modelValue', 'label', 'type', 'placeholder', 'icon', 'error']);
-defineEmits(['update:modelValue', 'blur']);
+import { AlertCircle } from 'lucide-vue-next'
+defineProps(['modelValue', 'label', 'type', 'placeholder', 'icon', 'error'])
+defineEmits(['update:modelValue', 'blur'])
 </script>
 
 <template>
@@ -8,11 +9,11 @@ defineEmits(['update:modelValue', 'blur']);
     <label v-if="label" class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">
       {{ label }}
     </label>
-    <div 
+    <div
       class="relative flex items-center bg-slate-50 border rounded-xl transition-all input-focus-within"
-      :class="[error ? 'border-red-400 bg-red-50' : 'border-slate-200']" 
+      :class="[error ? 'border-red-400 bg-red-50' : 'border-slate-200']"
     >
-      <input 
+      <input
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
         @blur="$emit('blur')"
@@ -24,7 +25,7 @@ defineEmits(['update:modelValue', 'blur']);
         <component :is="icon" class="w-5 h-5" />
       </div>
     </div>
-    <p v-if="error" class="text-red-500 text-xs mt-1 ml-1 font-bold">{{ error }}</p>
+    <p v-if="error" class="flex items-center text-red-500 text-xs mt-1 ml-1 font-bold"><AlertCircle class="w-3.5 h-3.5 mr-1" />{{ error }}</p>
   </div>
 </template>
 

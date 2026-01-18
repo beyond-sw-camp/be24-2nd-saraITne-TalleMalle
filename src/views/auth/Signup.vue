@@ -3,7 +3,7 @@ import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router' // 라우터 사용을 위해 추가
 import { CarFront, Mail, Lock, Check, User } from 'lucide-vue-next' // Lucide 아이콘
 import AuthBaseInput from '../../components/signup/AuthBaseInput.vue'
-import SignupLayout from '@/components/signup/SignupLayout.vue'
+import AuthLayout from '@/components/signup/AuthLayout.vue'
 import api from '@/api/user'
 
 const router = useRouter() 
@@ -122,7 +122,8 @@ const signup = async () => {
 </script>
 
 <template>
-  <SignupLayout>
+  <div class="signup-page-wrapper">
+  <AuthLayout :key="$route.path">
     <template #header>
       <h2 class="text-xl font-bold text-slate-900">회원가입</h2>
       <p class="text-slate-500 mt-2 text-sm">간편하게 가입하고 서비스를 이용해보세요.</p>
@@ -197,7 +198,8 @@ const signup = async () => {
         </RouterLink>
       </p>
     </template>
-  </SignupLayout>
+  </AuthLayout>
+  </div>
 </template>
 
 
