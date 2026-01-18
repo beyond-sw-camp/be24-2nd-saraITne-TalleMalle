@@ -2,10 +2,10 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/api/user/index.js'
+import api from '@/api/main/index.js'
 
 // 컴포넌트 import
-import Map from '@/components/main/Map.vue' // [추가됨]
+import Map from '@/components/main/Map.vue'
 import RecruitListPanel from '@/components/main/RecruitListPanel.vue'
 import RecruitDetailPanel from '@/components/main/RecruitDetailPanel.vue'
 import CreateRecruitModal from '@/components/main/CreateRecruitModal.vue'
