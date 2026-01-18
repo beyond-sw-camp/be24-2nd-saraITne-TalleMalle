@@ -1,8 +1,9 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router' // 라우터 사용을 위해 추가
-import AuthBaseInput from '../../components/signup/AuthBaseInput.vue'
 import { CarFront, Mail, Lock, Check, User } from 'lucide-vue-next' // Lucide 아이콘
+import AuthBaseInput from '../../components/signup/AuthBaseInput.vue'
+import SignupLayout from '@/components/signup/SignupLayout.vue'
 
 // [수정 1] API 모듈 주석 해제 (실제 통신을 위해 필요)
 import api from '@/api/user'
@@ -123,109 +124,81 @@ const signup = async () => {
 </script>
 
 <template>
-  <div class="signup-container">
-    <div class="signup-card">
-      <div class="p-8 pb-4 flex flex-col items-center text-center">
-        <div class="flex items-center gap-2 mb-6">
-          <div class="bg-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-indigo-100 logo-bounce">
-            <CarFront class="text-white w-7 h-7" />
-          </div>
-          <h1 class="text-2xl font-bold tracking-tight text-indigo-900">탈래말래</h1>
-        </div>
-        <h2 class="text-xl font-bold text-slate-800">회원가입</h2>
-        <p class="text-slate-500 mt-2 text-sm">간편하게 가입하고 서비스를 이용해보세요.</p>
-      </div>
+  <SignupLayout>
+    <template #header>
+      <h2 class="text-xl font-bold text-slate-900">회원가입</h2>
+      <p class="text-slate-500 mt-2 text-sm">간편하게 가입하고 서비스를 이용해보세요.</p>
+    </template>
 
-      <form class="p-8 pt-4 space-y-5" @submit.prevent="signup">
-        <!-- 1. 이메일 입력 -->
-        <AuthBaseInput
-          v-model="signupForm.email"
-          label="이메일 계정"
-          type="email"
-          placeholder="example@tallemalle.com"
-          :icon="Mail"
-          :error="signupInputError.email.errorMessage"
-          @blur="emailRules"
-        />
+    <form class="p-8 pt-4 space-y-5" @submit.prevent="signup">
+      <!-- 1. 이메일 입력 -->
+      <AuthBaseInput
+        v-model="signupForm.email"
+        label="이메일 계정"
+        type="email"
+        placeholder="example@tallemalle.com"
+        :icon="Mail"
+        :error="signupInputError.email.errorMessage"
+        @blur="emailRules"
+      />
 
-        <!-- 2. 닉네임 입력 -->
-        <AuthBaseInput
-          v-model="signupForm.name"
-          label="닉네임"
-          type="text"
-          placeholder="닉네임을 입력해주세요"
-          :icon="User"
-          :error="signupInputError.name.errorMessage"
-          @blur="nicknameRules"
-        />
+      <!-- 2. 닉네임 입력 -->
+      <AuthBaseInput
+        v-model="signupForm.name"
+        label="닉네임"
+        type="text"
+        placeholder="닉네임을 입력해주세요"
+        :icon="User"
+        :error="signupInputError.name.errorMessage"
+        @blur="nicknameRules"
+      />
 
-        <!-- 3. 비밀번호 입력 -->
-        <AuthBaseInput
-          v-model="signupForm.password"
-          label="비밀번호"
-          type="password"
-          placeholder="비밀번호 입력"
-          :icon="Lock"
-          :error="signupInputError.password.errorMessage"
-          @blur="passwordRules"
-        />
+      <!-- 3. 비밀번호 입력 -->
+      <AuthBaseInput
+        v-model="signupForm.password"
+        label="비밀번호"
+        type="password"
+        placeholder="비밀번호 입력"
+        :icon="Lock"
+        :error="signupInputError.password.errorMessage"
+        @blur="passwordRules"
+      />
 
-        <!-- 4. 비밀번호 확인 -->
-        <AuthBaseInput
-          v-model="passwordConfirm"
-          label="비밀번호 확인"
-          type="password"
-          placeholder="비밀번호 재입력"
-          :icon="Check"
-          :error="passwordConfirm && signupForm.password !== passwordConfirm ? '비밀번호가 일치하지 않습니다.' : null"
-        />
+      <!-- 4. 비밀번호 확인 -->
+      <AuthBaseInput
+        v-model="passwordConfirm"
+        label="비밀번호 확인"
+        type="password"
+        placeholder="비밀번호 재입력"
+        :icon="Check"
+        :error="
+          passwordConfirm && signupForm.password !== passwordConfirm
+            ? '비밀번호가 일치하지 않습니다.'
+            : null
+        "
+      />
 
-        <button
-          :disabled="!isFormValid"
-          type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
-        >
-          <span>가입 완료</span>
-          <Check class="w-5 h-5" />
-        </button>
-      </form>
+      <button
+        :disabled="!isFormValid"
+        type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
+      >
+        <span>가입 완료</span>
+        <Check class="w-5 h-5" />
+      </button>
+    </form>
 
-      <div class="p-6 bg-slate-50 text-center border-t border-slate-100">
-        <p class="text-sm text-slate-500">
-          이미 계정이 있으신가요?
-          <!-- RouterLink를 사용하여 라우팅 처리 -->
-          <RouterLink to="/login" class="text-indigo-600 font-bold hover:underline ml-1">
-            로그인
-          </RouterLink>
-        </p>
-      </div>
-    </div>
-  </div>
+    <!-- footer -->
+    <template #footer>
+      <p class="text-sm text-slate-500">
+        이미 계정이 있으신가요?
+        <!-- RouterLink를 사용하여 라우팅 처리 -->
+        <RouterLink to="/login" class="text-indigo-600 font-bold hover:underline ml-1">
+          로그인
+        </RouterLink>
+      </p>
+    </template>
+  </SignupLayout>
 </template>
 
-<style scoped>
-.signup-container {
-  font-family: 'Pretendard', sans-serif;
-  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
 
-.signup-card {
-  background: white;
-  border-radius: 24px;
-  box-shadow: 0 10px 40px rgba(30, 27, 75, 0.1);
-  width: 100%;
-  max-width: 420px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.logo-bounce:hover {
-  transform: translateY(-3px) rotate(5deg);
-  transition: transform 0.3s ease;
-}
-</style>
