@@ -4,11 +4,9 @@ import { useRouter } from 'vue-router' // 라우터 사용을 위해 추가
 import { CarFront, Mail, Lock, Check, User } from 'lucide-vue-next' // Lucide 아이콘
 import AuthBaseInput from '../../components/signup/AuthBaseInput.vue'
 import SignupLayout from '@/components/signup/SignupLayout.vue'
-
-// [수정 1] API 모듈 주석 해제 (실제 통신을 위해 필요)
 import api from '@/api/user'
 
-const router = useRouter() // [수정 2] 라우터 객체 생성 주석 해제
+const router = useRouter() 
 
 // --- 상태 관리 ---
 const signupForm = reactive({
@@ -178,6 +176,7 @@ const signup = async () => {
         "
       />
 
+      <!-- 5. 회원가입 버튼 -->
       <button
         :disabled="!isFormValid"
         type="submit"
