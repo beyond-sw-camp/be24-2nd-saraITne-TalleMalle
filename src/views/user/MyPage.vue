@@ -3,6 +3,7 @@ import { ref, reactive, onMounted, nextTick, watch, computed } from 'vue'
 import { UserMinus, CreditCard, CheckCircle2, X, Trash2, Check, AlertCircle } from 'lucide-vue-next'
 import RoundBox from '@/components/layout/RoundBox.vue'
 import EditPayment from '@/views/payment/EditPayment.vue'
+import EditProfile from '@/components/profile/EditProfile.vue'
 import HistoryEntry from '@/components/entry/HistoryEntry.vue'
 import ReviewEntry from '@/components/entry/ReviewEntry.vue'
 import { useProfileStore } from '@/stores/profile'
@@ -13,20 +14,16 @@ const profileStore = useProfileStore()
 const activeTab = ref('history') // 'history' | 'reviews'
 const isRideHistoryModalOpen = ref(false)
 const isEditPaymentModalOpen = ref(false)
+const isEditProfileOpen = ref(false)
 const isReviewModalOpen = ref(false)
 const isPaymentActionModalOpen = ref(false)
-const isLimitReachedModalOpen = ref(false) // 최대 개수 도달 알림 모달
+const isLimitReachedModalOpen = ref(false)
 
 const currentHistory = ref({})
 const currentReview = ref({})
 const selectedPayment = ref(null)
 
 // --- 계산된 속성 ---
-
-/**
- * 결제 수단 리스트를 정렬합니다.
- * 기본 결제 수단(default ID 매칭)이 항상 첫 번째에 오도록 합니다.
- */
 const sortedPaymentList = computed(() => {
   const list = [...(profileStore.userInfo.payment.list || [])]
   const defaultId = profileStore.userInfo.payment.default
@@ -60,7 +57,6 @@ const checkScroll = (el, type) => {
   }
 }
 
-// 스토어 데이터를 감시하여 스크롤 상태 업데이트
 watch(
   [activeTab, () => profileStore.userInfo.history, () => profileStore.userInfo.review],
   async () => {
@@ -89,7 +85,6 @@ const openMyReview = (item) => {
   isReviewModalOpen.value = true
 }
 
-// 결제 수단 추가 모달 핸들러 (개수 제한 로직)
 const handleEditPaymentModal = () => {
   if (!isEditPaymentModalOpen.value && profileStore.userInfo.payment.list.length >= 2) {
     isLimitReachedModalOpen.value = true
@@ -132,6 +127,7 @@ onMounted(async () => {
 
 <template>
   <div class="h-full flex gap-4 p-4 overflow-hidden relative text-slate-900">
+    <!-- 왼쪽 여백 (MD 이상) -->
     <div class="hidden md:block w-20 shrink-0"></div>
 
     <div
@@ -182,17 +178,15 @@ onMounted(async () => {
               <h2 class="text-xl font-bold text-slate-900">
                 {{ profileStore.userInfo.profile.nickname || '사용자' }}
               </h2>
-              <!-- 이메일 대신 자기소개(bio) 표시 -->
               <p class="text-xs text-slate-400 mb-6 text-center tracking-tight leading-relaxed">
                 {{ profileStore.userInfo.profile.bio || '등록된 자기소개가 없습니다.' }}
               </p>
-              <RouterLink to="/editprofile">
-                <button
-                  class="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
-                >
-                  개인정보 수정
-                </button>
-              </RouterLink>
+              <button
+                @click="isEditProfileOpen = true"
+                class="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100"
+              >
+                개인정보 수정
+              </button>
             </RoundBox>
 
             <!-- 매너 등급 -->
@@ -228,7 +222,7 @@ onMounted(async () => {
             <div class="flex-1"></div>
             <div class="pt-4 flex justify-center mt-auto flex-none">
               <button
-                class="flex items-center gap-1.5 text-slate-300 hover: Rose-500 transition-all font-bold text-[11px]"
+                class="flex items-center gap-1.5 text-slate-300 hover:text-rose-500 transition-all font-bold text-[11px]"
               >
                 <UserMinus class="w-3.5 h-3.5" />
                 탈래말래 탈퇴하기
@@ -238,7 +232,7 @@ onMounted(async () => {
 
           <!-- 오른쪽 섹션 -->
           <div class="col-span-12 lg:col-span-8 space-y-6 flex flex-col min-h-0">
-            <!-- 결제 수단 연동 (정렬된 리스트 출력) -->
+            <!-- 결제 수단 섹션 -->
             <RoundBox padding="32px" class="flex-none">
               <div class="flex items-center justify-between mb-6">
                 <h3 class="font-bold text-slate-900 flex items-center gap-2 text-left">
@@ -295,6 +289,7 @@ onMounted(async () => {
               </div>
             </RoundBox>
 
+            <!-- 기록/리뷰 탭 영역 -->
             <RoundBox padding="0" class="overflow-hidden flex flex-col flex-none h-[450px]">
               <div class="flex border-b border-slate-50 flex-none">
                 <button
@@ -318,9 +313,9 @@ onMounted(async () => {
                   "
                 >
                   받은 리뷰
-                  <span class="ml-1 text-[10px] bg-slate-100 px-1.5 py-0.5 rounded-md">{{
-                    profileStore.userInfo.review?.length || 0
-                  }}</span>
+                  <span class="ml-1 text-[10px] bg-slate-100 px-1.5 py-0.5 rounded-md">
+                    {{ profileStore.userInfo.review?.length || 0 }}
+                  </span>
                 </button>
               </div>
 
@@ -391,167 +386,170 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- 결제 수단 관리 모달 -->
-    <div
-      v-if="isPaymentActionModalOpen"
-      class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
-      @click="isPaymentActionModalOpen = false"
-    >
+    <!-- 모든 모달을 Teleport로 묶어 최상단에 렌더링 -->
+    <Teleport to="body">
+      <!-- 1. 프로필 수정 모달 (EditProfile) -->
+      <EditProfile v-if="isEditProfileOpen" @close="isEditProfileOpen = false" />
+
+      <!-- 2. 결제 수단 추가 모달 -->
       <div
-        class="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
-        @click.stop
+        v-if="isEditPaymentModalOpen"
+        class="fixed inset-0 z-[160] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4"
+        @click="isEditPaymentModalOpen = false"
       >
-        <div class="p-8 text-center border-b border-slate-50">
-          <div
-            class="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-4"
-          >
-            <CreditCard class="w-8 h-8 text-slate-400" />
-          </div>
-          <h2 class="text-lg font-extrabold text-slate-900 mb-1">결제 수단 관리</h2>
-          <p class="text-sm text-slate-400 font-medium">
-            {{ selectedPayment?.card_company }} ({{
-              selectedPayment?.card_number?.split('-').pop()
-            }})
-          </p>
-        </div>
-        <div class="p-4 grid grid-cols-1 gap-2">
-          <button
-            v-if="selectedPayment?.id !== profileStore.userInfo.payment.default"
-            @click="setAsDefaultPayment"
-            class="flex items-center justify-center gap-2 w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all"
-          >
-            <Check class="w-4 h-4" />
-            기본 결제 수단으로 설정
-          </button>
-
-          <button
-            @click="deletePaymentMethod"
-            class="flex items-center justify-center gap-2 w-full py-4 bg-slate-50 text-rose-500 rounded-2xl font-bold hover:bg-rose-50 transition-all"
-          >
-            <Trash2 class="w-4 h-4" />
-            삭제하기
-          </button>
-
-          <button
-            @click="isPaymentActionModalOpen = false"
-            class="w-full py-4 text-slate-400 font-bold text-sm hover:text-slate-600 transition-all"
-          >
-            닫기
-          </button>
+        <div class="w-full max-w-md animate-in fade-in zoom-in duration-300" @click.stop>
+          <EditPayment @close="isEditPaymentModalOpen = false" />
         </div>
       </div>
-    </div>
 
-    <!-- 개수 제한 알림 모달 -->
-    <div
-      v-if="isLimitReachedModalOpen"
-      class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
-      @click="isLimitReachedModalOpen = false"
-    >
+      <!-- 3. 결제 수단 관리 모달 -->
       <div
-        class="bg-white w-full max-w-xs rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
-        @click.stop
+        v-if="isPaymentActionModalOpen"
+        class="fixed inset-0 z-[170] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
+        @click="isPaymentActionModalOpen = false"
       >
-        <div class="p-8 text-center">
-          <div
-            class="w-16 h-16 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-4"
-          >
-            <AlertCircle class="w-8 h-8 text-amber-500" />
+        <div
+          class="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+          @click.stop
+        >
+          <div class="p-8 text-center border-b border-slate-50">
+            <div
+              class="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-4"
+            >
+              <CreditCard class="w-8 h-8 text-slate-400" />
+            </div>
+            <h2 class="text-lg font-extrabold text-slate-900 mb-1">결제 수단 관리</h2>
+            <p class="text-sm text-slate-400 font-medium">
+              {{ selectedPayment?.card_company }} ({{
+                selectedPayment?.card_number?.split('-').pop()
+              }})
+            </p>
           </div>
-          <h2 class="text-lg font-extrabold text-slate-900 mb-2">등록 제한</h2>
-          <p class="text-sm text-slate-500 font-medium leading-relaxed">
-            결제 수단은 최대 <span class="text-indigo-600 font-bold">2개</span>까지<br />등록할 수
-            있습니다.
-          </p>
+          <div class="p-4 grid grid-cols-1 gap-2">
+            <button
+              v-if="selectedPayment?.id !== profileStore.userInfo.payment.default"
+              @click="setAsDefaultPayment"
+              class="flex items-center justify-center gap-2 w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all"
+            >
+              <Check class="w-4 h-4" /> 기본 결제 수단으로 설정
+            </button>
+            <button
+              @click="deletePaymentMethod"
+              class="flex items-center justify-center gap-2 w-full py-4 bg-slate-50 text-rose-500 rounded-2xl font-bold hover:bg-rose-50 transition-all"
+            >
+              <Trash2 class="w-4 h-4" /> 삭제하기
+            </button>
+            <button
+              @click="isPaymentActionModalOpen = false"
+              class="w-full py-4 text-slate-400 font-bold text-sm"
+            >
+              닫기
+            </button>
+          </div>
         </div>
-        <div class="p-4 pt-0">
+      </div>
+
+      <!-- 4. 탑승 상세 모달 -->
+      <div
+        v-if="isRideHistoryModalOpen"
+        class="fixed inset-0 z-[180] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
+        @click="isRideHistoryModalOpen = false"
+      >
+        <div
+          class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-200"
+          @click.stop
+        >
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-slate-900">탑승 상세 정보</h2>
+            <button @click="isRideHistoryModalOpen = false">
+              <X class="w-6 h-6 text-slate-400" />
+            </button>
+          </div>
+          <div class="space-y-4 mb-8">
+            <div class="flex justify-between py-2 border-b border-slate-50">
+              <span class="text-slate-400 text-sm">경로</span>
+              <span class="text-slate-800 font-bold text-sm text-right"
+                >{{ currentHistory.start }} → {{ currentHistory.dest }}</span
+              >
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-50">
+              <span class="text-slate-400 text-sm">탑승 시각</span>
+              <span class="text-slate-800 font-bold text-sm text-right">{{
+                currentHistory.time
+              }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-50">
+              <span class="text-slate-400 text-sm">결제 금액</span>
+              <span class="text-slate-800 font-bold text-sm text-right">{{
+                currentHistory.cost
+              }}</span>
+            </div>
+          </div>
           <button
-            @click="isLimitReachedModalOpen = false"
-            class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all"
+            @click="isRideHistoryModalOpen = false"
+            class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold"
           >
             확인
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- 탑승 상세 모달 -->
-    <div
-      v-if="isRideHistoryModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-6"
-      @click="isRideHistoryModalOpen = false"
-    >
-      <div class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl" @click.stop>
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 text-left">탑승 상세 정보</h2>
-          <button @click="isRideHistoryModalOpen = false">
-            <X class="w-6 h-6 text-slate-400" />
+      <!-- 5. 리뷰 상세 모달 -->
+      <div
+        v-if="isReviewModalOpen"
+        class="fixed inset-0 z-[190] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
+        @click="isReviewModalOpen = false"
+      >
+        <div
+          class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl animate-in fade-in zoom-in duration-200"
+          @click.stop
+        >
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-slate-900">리뷰 상세</h2>
+            <button @click="isReviewModalOpen = false"><X class="w-6 h-6 text-slate-400" /></button>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-3xl mb-8 italic text-slate-600 leading-relaxed">
+            "{{ currentReview.contents }}"
+          </div>
+          <button
+            @click="isReviewModalOpen = false"
+            class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold"
+          >
+            확인
           </button>
         </div>
-        <div class="space-y-4 mb-8">
-          <div class="flex justify-between py-2 border-b border-slate-50">
-            <span class="text-slate-400 text-sm">경로</span>
-            <span class="text-slate-800 font-bold text-sm text-right"
-              >{{ currentHistory.start }} → {{ currentHistory.dest }}</span
-            >
-          </div>
-          <div class="flex justify-between py-2 border-b border-slate-50">
-            <span class="text-slate-400 text-sm">탑승 시각</span>
-            <span class="text-slate-800 font-bold text-sm text-right">{{
-              currentHistory.time
-            }}</span>
-          </div>
-          <div class="flex justify-between py-2 border-b border-slate-50">
-            <span class="text-slate-400 text-sm">결제 금액</span>
-            <span class="text-slate-800 font-bold text-sm text-right">{{
-              currentHistory.cost
-            }}</span>
-          </div>
-        </div>
-        <button
-          @click="isRideHistoryModalOpen = false"
-          class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold"
-        >
-          확인
-        </button>
       </div>
-    </div>
 
-    <!-- 리뷰 상세 모달 -->
-    <div
-      v-if="isReviewModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-6"
-      @click="isReviewModalOpen = false"
-    >
-      <div class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl" @click.stop>
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 text-left">리뷰 상세</h2>
-          <button @click="isReviewModalOpen = false"><X class="w-6 h-6 text-slate-400" /></button>
-        </div>
-        <div
-          class="bg-slate-50 p-6 rounded-3xl mb-8 italic text-slate-600 leading-relaxed text-left"
-        >
-          "{{ currentReview.contents }}"
-        </div>
-        <button
-          @click="isReviewModalOpen = false"
-          class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold"
-        >
-          확인
-        </button>
-      </div>
-    </div>
-
-    <!-- 결제 수단 추가/수정 텔레포트 -->
-    <Teleport to="body">
+      <!-- 6. 등록 제한 알림 -->
       <div
-        v-if="isEditPaymentModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4"
-        @click="isEditPaymentModalOpen = false"
+        v-if="isLimitReachedModalOpen"
+        class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
+        @click="isLimitReachedModalOpen = false"
       >
-        <div class="w-full max-w-md animate-in fade-in zoom-in duration-300" @click.stop>
-          <!-- EditPayment 내부에서 직접 스토어를 처리하므로 emit만 받아 모달을 닫음 -->
-          <EditPayment @close="handleEditPaymentModal" />
+        <div
+          class="bg-white w-full max-w-xs rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+          @click.stop
+        >
+          <div class="p-8 text-center">
+            <div
+              class="w-16 h-16 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-4"
+            >
+              <AlertCircle class="w-8 h-8 text-amber-500" />
+            </div>
+            <h2 class="text-lg font-extrabold text-slate-900 mb-2">등록 제한</h2>
+            <p class="text-sm text-slate-500 font-medium">
+              결제 수단은 최대 <span class="text-indigo-600 font-bold">2개</span>까지<br />등록할 수
+              있습니다.
+            </p>
+          </div>
+          <div class="p-4 pt-0">
+            <button
+              @click="isLimitReachedModalOpen = false"
+              class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold"
+            >
+              확인
+            </button>
+          </div>
         </div>
       </div>
     </Teleport>
