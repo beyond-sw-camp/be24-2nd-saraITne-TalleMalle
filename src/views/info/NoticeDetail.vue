@@ -1,14 +1,34 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import api from '@/api/notice/index.js'; // API 임포트
+import { Calendar, Eye } from 'lucide-vue-next'; // 아이콘 직접 임포트
 
 const route = useRoute();
-const noticeTitle = ref(route.params.id || '매너 온도 산정 방식 고도화 안내');
+const notice = ref(null); // 공지사항 전체 데이터를 담을 객체
+const isLoading = ref(true);
+
+const fetchNoticeDetail = async () => {
+    try {
+        const noticeId = route.params.num; // URL에서 번호 가져오기
+        
+        // 1. API 호출
+        const response = await api.getNoticeDetail(noticeId); 
+        
+        // 2. 데이터 할당 
+        // JSON 구조가 { data: { num: 1, title: "..." } } 이므로 response.data를 할당
+        notice.value = response.data;
+        
+        console.log("불러온 데이터:", notice.value);
+    } catch (error) {
+        console.error("상세 내용을 불러오는데 실패했습니다.", error);
+    } finally {
+        isLoading.value = false;
+    }
+};
 
 onMounted(() => {
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
+    fetchNoticeDetail();
 });
 </script>
 
