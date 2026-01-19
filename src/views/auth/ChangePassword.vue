@@ -2,8 +2,9 @@
 import { reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { ArrowLeft, Lock, KeyRound, CheckCircle2, Info, AlertCircle } from 'lucide-vue-next'
-import AuthBaseInput from '../../components/signup/AuthBaseInput.vue'
+import { ArrowLeft, Lock, KeyRound, CheckCircle2 } from 'lucide-vue-next'
+import AuthBaseInput from '../../components/auth/AuthBaseInput.vue'
+import PasswordPolicy from '../../components/auth/PasswordPolicy.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -164,16 +165,8 @@ const handleChangePassword = () => {
               @blur="checkConfirmPassword"
             />
           </div>
-
-          <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
-            <h4 class="text-xs font-bold text-indigo-900 mb-2 flex items-center gap-1">
-              <Info class="w-3 h-3" /> 비밀번호 설정 규칙
-            </h4>
-            <ul class="text-xs text-slate-500 space-y-1 list-disc list-inside ml-1">
-              <li>영문, 숫자, 특수문자를 포함하여 8자 이상이어야 합니다.</li>
-              <li>연속적인 숫자나 생년월일 등 쉬운 비밀번호는 피해주세요.</li>
-            </ul>
-          </div>
+          
+          <PasswordPolicy/>
         </div>
       </div>
 
