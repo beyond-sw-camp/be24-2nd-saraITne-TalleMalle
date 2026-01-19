@@ -2,16 +2,29 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Lock, ArrowLeft, Mail, MailCheck } from 'lucide-vue-next'
+import AuthBaseInput from '@/components/auth/AuthBaseInput.vue'
 
 const router = useRouter()
 const email = ref('')
+const emailError = ref('') // 에러 메시지 상태 추가
 const isModalOpen = ref(false)
 
 const handleFindPassword = () => {
+    // 초기화
+    emailError.ref = ''
+
     if (!email.value) {
-        alert('가입한 이메일을 입력해주세요.')
+        emailError.value = '가입한 이메일을 입력해주세요.'
         return
     }
+    
+    // 간단한 이메일 형식 체크 (선택 사항)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.value)) {
+        emailError.value = '유효한 이메일 형식이 아닙니다.'
+        return
+    }
+
     // 성공 모달 띄우기
     isModalOpen.value = true
 }
@@ -44,15 +57,15 @@ const closeModal = () => {
             </div>
 
             <form @submit.prevent="handleFindPassword" class="mt-8 space-y-4">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">이메일 주소</label>
-                    <div
-                        class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
-                        <Mail class="absolute left-4 w-5 h-5 text-slate-400" />
-                        <input v-model="email" type="email" placeholder="example@email.com"
-                            class="w-full pl-12 pr-4 py-4 bg-transparent outline-none text-sm font-medium" />
-                    </div>
-                </div>
+                <AuthBaseInput 
+        v-model="email"
+        label="이메일 주소"
+        label-class="text-xs text-slate-400 uppercase" 
+        type="email"
+        placeholder="example@email.com"
+        :icon="Mail"
+        :error="emailError"
+    />
 
                 <button type="submit"
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] mt-4">
