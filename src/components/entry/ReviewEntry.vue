@@ -1,7 +1,6 @@
 <script setup>
 // 1. 필요한 아이콘 컴포넌트를 반드시 임포트해야 합니다.
 import { Quote, Star } from 'lucide-vue-next'
-
 defineProps({
   review: {
     type: Object,
