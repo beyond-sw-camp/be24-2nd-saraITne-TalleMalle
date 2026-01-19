@@ -152,6 +152,8 @@ const updateRecruitMarkers = () => {
 }
 
 // --- 내 위치 및 지도 제어 함수들 (기존 유지) ---
+// === 상황 :     브라우저에서 사용자가 "위치 정보 제공"을 거부(Block) 했을 때, 지도가 멈추거나 내 위치 마커가 생성되지 않습니다. ===
+// === 해결 방법: Map.vue에서 에러 콜백을 처리하고, Main.vue로 신호를 보내 사용자에게 "위치 권한이 필요합니다"라고 알려줘야 합니다. ===
 const initGeolocation = () => {
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((pos) => {
@@ -159,7 +161,11 @@ const initGeolocation = () => {
             lng.value = pos.coords.longitude
             updateMyMarker()
             emit('update-location', { lat: lat.value, lng: lng.value })
-        }, null, { enableHighAccuracy: true })
+        }, (error) => {
+            console.warn("위치 정보를 가져올 수 없습니다.", error.message)
+        }, { enableHighAccuracy: true, timeout: 5000 })
+    } else {
+        alert("이 브라우저는 위치 정보를 지원하지 않습니다.")
     }
 }
 

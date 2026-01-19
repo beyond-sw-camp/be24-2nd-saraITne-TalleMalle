@@ -56,7 +56,19 @@ onMounted(async () => {
     // 비동기로 데이터 가져오기
     await fetchRecruits()
 
-    // 만약 이미 참여/모집 중이라면 해당 방의 정보를 찾아두거나 채팅 연결 등의 복구 로직이 필요함
+    // 이미 참여중인 방 ID가 있는데, 현재 리스트에 그 방이 없다면?
+    if (myStatus.value !== 'IDLE' && myRecruitId.value) {
+        const targetRoom = recruitList.value.find(r => r.id === myRecruitId.value)
+        if (!targetRoom) {
+            // 리스트에 없다고 무조건 지우지 말고 상세 조회를 시도했을 때 404가 뜨면 초기화 해야함
+            try {
+                // 여긴 상태 검증 api가 들어가야 함
+            } catch (e) {
+                alert("참여 중이던 방이 종료되었습니다.")
+                updateMyStatus('IDLE', null)
+            }
+        }
+    }
     console.log(`현재 상태: ${myStatus.value}, 방 ID: ${myRecruitId.value}`)
 })
 
@@ -90,7 +102,7 @@ const fetchRecruits = async () => {
         const res = await api.getRecruitList()
 
         // 데이터가 정상이라면
-        if (res && Array.isArray(red.data)) {
+        if (res && Array.isArray(res.data)) {
             recruitList.value = res.data.filter(item => item.startLat && item.startLng)
             // 데이터에 문제가 있으면
         } else {
@@ -199,11 +211,25 @@ const bottomBarClass = computed(() => {
 // ===================================================
 
 // --- 모집 시작하기 로직 (내가 방장되기) ---
+// === 상황:      소켓이 연결되지 않은 상태(isSocketConnected = false)에서 '모집 시작하기'를 누르면, ws.send에서 에러가 나거나 아무 반응이 없습니다. ===
+// === 해결 방법: 버튼을 비활성화하거나, 전송 직전에 연결 상태를 한 번 더 체크해야 합니다. ===
 const handleCreateSubmit = (formData) => {
 
     // 이미 다른 방에 참여 중이면 거절
     if (myStatus.value !== 'IDLE') {
         alert('이미 진행 중인 모집이 있습니다.')
+        return
+    }
+
+    // 소켓 연결 상태 체크
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        alert("서버와 연결이 불안정합니다. 잠시 후 다시 시도해주세요.")
+        return
+    }
+
+    // 데이터 유효성 재검증(좌표 확인)
+    if (!formData.startLat || !formData.startLng) {
+        alert("출발지와 목적지의 위치 정보가 정확하지 않습니다.")
         return
     }
 
@@ -221,7 +247,7 @@ const handleCreateSubmit = (formData) => {
         }
     }
 
-    if (ws && ws.readyState === WebSocket.OPEN) {
+    try {
         // 서버로 데이터 전송
         ws.send(JSON.stringify(payload))
 
@@ -234,7 +260,8 @@ const handleCreateSubmit = (formData) => {
 
         // 바로 채팅방 이동 (예시)
         // router.push(`/chat/${newId}`)
-    } else {
+    } catch (e) {
+        console.error("전송 실패:", e)
         alert('서버 연결 상태를 확인해주세요.')
     }
 }
