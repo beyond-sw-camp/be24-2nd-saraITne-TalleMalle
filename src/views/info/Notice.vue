@@ -11,6 +11,7 @@ import FaqItem from '@/components/notice/FaqItem.vue'
 const activeTab = ref('notice')
 const activeFaq = ref(null)
 const noticeList = ref([])
+const faqs = ref([])
 
 // 공지사항 리스트 가져오기
 const getNoticeList = async () => {
@@ -23,17 +24,17 @@ const getNoticeList = async () => {
   }
 }
 
-const faqs = ref([
-  {
-    question: '매칭이 완료된 후 취소하면 어떻게 되나요?',
-    answer:
-      '배차가 완료된 후 취소할 경우 다른 동승자들에게 피해가 갈 수 있습니다. 잦은 취소 시 매너 온도가 하락하거나 이용이 제한될 수 있습니다.',
-  },
-  {
-    question: '결제는 어떤 방식으로 진행되나요?',
-    answer: '목적지 도착 후 정산하기 버튼을 누르면 사전에 등록하신 카드로 자동 결제됩니다.',
-  },
-])
+
+const getFaqList = async () => {
+  try {
+    const res = await api.faqList() // API 호출
+    // console.log("받아온 FAQ 데이터:", res) 
+
+    faqs.value = res.data || res 
+  } catch (error) {
+    console.error('FAQ를 불러오는 중 오류 발생:', error)
+  }
+}
 
 const toggleFaq = (index) => {
   activeFaq.value = activeFaq.value === index ? null : index
@@ -41,6 +42,7 @@ const toggleFaq = (index) => {
 
 onMounted(() => {
   getNoticeList()
+  getFaqList()
 })
 </script>
 
