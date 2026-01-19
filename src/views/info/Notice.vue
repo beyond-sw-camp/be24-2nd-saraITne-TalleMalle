@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ChevronDown, List } from 'lucide-vue-next' // 아이콘 직접 임포트
 import api from '@/api/notice/index.js'
+import PageHeader from '@/components/layout/PageHeader.vue'
 
 // 상태 관리
 const activeTab = ref('notice')
@@ -48,14 +49,10 @@ onMounted(() => {
     ></div>
 
     <div class="flex-1 glass-panel rounded-[2.5rem] overflow-hidden flex flex-col">
-      <div class="border-b border-slate-100 bg-white/50 w-full">
-        <div class="max-w-5xl mx-auto px-8 py-8">
-          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">공지사항</h1>
-          <p class="text-sm text-slate-400 font-medium mt-1">
-            탈래말래의 새로운 소식과 자주 묻는 질문을 확인하세요.
-          </p>
-        </div>
-      </div>
+      <PageHeader 
+        title="공지사항" 
+        description="탈래말래의 새로운 소식과 자주 묻는 질문을 확인하세요."
+      />
 
       <div class="flex-1 overflow-y-auto custom-scroll p-8">
         <div class="max-w-5xl mx-auto space-y-6">
