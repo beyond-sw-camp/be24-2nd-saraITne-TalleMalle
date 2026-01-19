@@ -2,8 +2,9 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { storeToRefs } from 'pinia'
 import { useNotificationStore } from '@/stores/notification'
+import { useRecruitStore } from '@/stores/recruit'
+import { storeToRefs } from 'pinia'
 import {
     CarFront, Home, MessageCircle, Bell, Megaphone,
     Settings, LogOut, UserPlus, CheckCircle2, CreditCard, Gift
@@ -12,12 +13,11 @@ import {
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const recruitStore = useRecruitStore()
 
 // 채팅 아이콘 클릭 시 실행될 함수
 const handleChatClick = () => {
-    const myStatus = localStorage.getItem('myStatus')
-
-    if (!myStatus || myStatus === 'IDLE') {
+    if (recruitStore.status === 'IDLE') {
         alert("참여 중인 채팅방이 없습니다. 먼저 모집에 참여해주세요!")
         return
     }
@@ -53,7 +53,7 @@ const handleClickOutside = (event) => {
 
 onMounted(async () => {
     document.addEventListener('click', handleClickOutside)
-    // ✅ 앱 시작 시 데이터가 비어있으면 가져오기
+    // 앱 시작 시 데이터가 비어있으면 가져오기
     if (notifications.value.length === 0) {
         await notificationStore.fetchNotifications()
     }

@@ -11,6 +11,9 @@
 import { inject } from 'vue'
 import { MapPin, LogOut, Wifi, WifiOff } from 'lucide-vue-next' // 예쁜 아이콘들
 import { useRouter } from 'vue-router' // 페이지 이동을 위한 도구
+import { useRecruitStore } from '@/stores/recruit'
+
+const recruitStore = useRecruitStore()
 
 /**
  * Props 정의
@@ -42,19 +45,9 @@ const myUserName = inject('myUserName', '나')
  */
 const goBack = () => {
 
-    // 내 상태를 대기 중(IDLE)로 변경
-    localStorage.setItem('myStatus', 'IDLE')
+    recruitStore.clear()
 
-    // 참여한 방 번호도 지움
-    localStorage.removeItem('myRecruitId')
-
-    // 실제 라우터가 설정되어 있다면 메인 페이지('/main')로 이동
-    if (router) {
-        router.push('/main')
-    } else {
-        // 개발 중이라 라우터가 없다면 알림창만 띄움
-        alert('나가기 버튼 클릭')
-    }
+    router.push('/main')
 }
 </script>
 

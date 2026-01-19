@@ -2,6 +2,8 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useRecruitStore } from '@/stores/recruit'
+import { storeToRefs } from 'pinia'
 import api from '@/api/main/index.js'
 
 // 컴포넌트 import
@@ -14,6 +16,11 @@ import BottomActionBar from '@/components/main/BottomActionBar.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const recruitStore = useRecruitStore()
+
+// --- 사용자 상태 관리 (LocalStorage 연동) ---
+// status: 'IDLE'(기본), 'OWNER'(모집장), 'JOINED'(참여자)
+const { status: myStatus, recruitId: myRecruitId } = storeToRefs(recruitStore)
 
 // --- 지도 제어용 Ref ---
 const mapComponent = ref(null) // TheMap 컴포넌트에 접근하기 위한 변수
@@ -30,10 +37,7 @@ const selectedRecruit = ref(null)
 const isDetailOpen = ref(false)
 const isCreateModalOpen = ref(false)
 
-// --- 사용자 상태 관리 (LocalStorage 연동) ---
-// status: 'IDLE'(기본), 'OWNER'(모집장), 'JOINED'(참여자)
-const myStatus = ref(localStorage.getItem('myStatus') || 'IDLE')
-const myRecruitId = ref(Number(localStorage.getItem('myRecruitId')) || null)
+
 
 // 웹 소켓 변수
 let ws = null
@@ -162,7 +166,7 @@ const joinChat = () => {
     }
 
     // 참여자로 상태 변경
-    updateMyStatus('JOINED', selectedRecruit.value.id)
+    recruitStore.setJoined(selectedRecruit.value.id)
 
     // 채팅방 이동
     // router.push(`/chat/${selectedRecruit.value.id}`)
@@ -181,19 +185,6 @@ const actionButtonState = computed(() => {
     }
 })
 
-// --- 상태 업데이트 및 LocalStorage 저장 함수 ---
-const updateMyStatus = (status, id) => {
-    myStatus.value = status
-    myRecruitId.value = id
-
-    if (status === 'IDLE') {
-        localStorage.removeItem('myStatus')
-        localStorage.removeItem('myRecruitId')
-    } else {
-        localStorage.setItem('myStatus', status)
-        localStorage.setItem('myRecruitId', String(id))
-    }
-}
 
 // ===================================================
 // ============= BottonAcationBar.vue ================
@@ -252,7 +243,7 @@ const handleCreateSubmit = (formData) => {
         ws.send(JSON.stringify(payload))
 
         // 내 상태 변경
-        updateMyStatus('OWNER', newId)
+        recruitStore.setOwner(newId)
 
         // 모달 닫기 및 알림
         isCreateModalOpen.value = false

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useRecruitStore } from '@/stores/recruit'
 import Main from '@/views/service/Main.vue'
 import Login from '@/views/auth/Login.vue'
 import Signup from '@/views/auth/Signup.vue'
@@ -32,7 +33,7 @@ const router = createRouter({
     { path: '/changepassword', name: 'changepassword', component: ChangePassword, meta: { requiresAuth: true } },
     { path: '/blocklist', name: 'blocklist', component: BlockList, meta: { requiresAuth: true } },
     { path: '/notice', name: 'notice', component: Notice, meta: { requiresAuth: true } },
-    { path: '/noticedetail/:num', name: 'noticedetail', component: NoticeDetail, meta: { requiresAuth: true }},
+    { path: '/noticedetail/:num', name: 'noticedetail', component: NoticeDetail, meta: { requiresAuth: true } },
     { path: '/notification', name: 'notification', component: Notification, meta: { requiresAuth: true } },
     { path: '/terms', name: 'terms', component: Terms, meta: { requiresAuth: true } },
     { path: '/privacy', name: 'privacy', component: Privacy, meta: { requiresAuth: true } },
@@ -63,16 +64,18 @@ const router = createRouter({
 
 // 네비게이션 가드 
 router.beforeEach((to, from, next) => {
+  const recruitStore = useRecruitStore()
   const user = localStorage.getItem('USERINFO')
   const myStatus = localStorage.getItem('myStatus')
 
-  // 1. 로그인 체크 (requiresAuth)
+  // 로그인 체크 (requiresAuth)
   if (to.meta.requiresAuth && !user) {
     next('/login')
   }
 
+  // 참여 상태 체크
   if (to.meta.requiresActiveStatus) {
-    if (!myStatus || myStatus === 'IDLE') {
+    if (recruitStore.status === 'IDLE') {
       alert("참여 중인 채팅방이 없습니다.")
       next('/') // 메인으로 강제 이동
       return
