@@ -3,100 +3,80 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Bell, ShieldCheck, ChevronRight, ExternalLink } from 'lucide-vue-next'
 import SettingPageLayout from '@/components/setting/SettingPageLayout.vue'
+import SettingSection from '@/components/setting/SettingSection.vue'
+import SettingGoToPageItem from '@/components/setting/SettingGoToPageItem.vue'
 
 // 마케팅 수신 동의 상태 (토글용)
 const marketingConsent = ref(true)
 </script>
 
 <template>
-  <SettingPageLayout 
-    title="환경 설정" 
-    description="앱 알림, 보안 및 고객 지원 설정을 관리합니다."
-  >
-        <div class="max-w-4xl mx-auto space-y-8 w-full">
-          <section class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-            <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-              <Bell class="w-5 h-5 text-indigo-600" />
-              알림 설정
-            </h3>
-
-            <div class="space-y-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-bold text-slate-700">마케팅 정보 수신</p>
-                  <p class="text-xs text-slate-400 mt-1">
-                    이벤트, 쿠폰 및 프로모션 소식을 푸시 알림으로 받습니다.
-                  </p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" v-model="marketingConsent" class="sr-only peer" />
-                  <div
-                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"
-                  ></div>
-                </label>
-              </div>
+  <SettingPageLayout title="환경 설정" description="앱 알림, 보안 및 고객 지원 설정을 관리합니다.">
+    <div class="max-w-4xl mx-auto space-y-8 w-full">
+      <SettingSection title="알림 설정" :icon="Bell">
+        <div class="space-y-6">
+          <div class="flex items-center justify-between px-2">
+            <div>
+              <p class="text-sm font-bold text-slate-700">마케팅 정보 수신</p>
+              <p class="text-xs text-slate-400 mt-1">
+                이벤트, 쿠폰 및 프로모션 소식을 푸시 알림으로 받습니다.
+              </p>
             </div>
-          </section>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" v-model="marketingConsent" class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"
+              ></div>
+            </label>
+          </div>
+        </div>
+      </SettingSection>
 
-          <section class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-            <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-              <ShieldCheck class="w-5 h-5 text-indigo-600" />
-              계정 및 보안
-            </h3>
+      <SettingSection title="계정 및 보안" :icon="ShieldCheck">
+        <div class="divide-y divide-slate-50">
+          <SettingGoToPageItem 
+            label="비밀번호 변경" 
+            to="/changepassword" 
+          />
+          
+          <SettingGoToPageItem 
+            label="차단한 사용자 관리" 
+            to="/blocklist" 
+          />
 
-            <div class="divide-y divide-slate-50">
-              <router-link
-                to="/changepassword"
-                class="w-full py-4 flex items-center justify-between hover:bg-slate-50 transition-colors rounded-xl px-2 group cursor-pointer"
-              >
-                <span class="text-sm font-medium text-slate-700">비밀번호 변경</span>
-                <ChevronRight
-                  class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition-transform"
-                />
-              </router-link>
+          <SettingGoToPageItem label="안심번호 사용 설정">
+            <template #right>
+              <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                사용 중
+              </span>
+            </template>
+          </SettingGoToPageItem>
+        </div>
+      </SettingSection>
 
-              <router-link
-                to="/blocklist"
-                class="w-full py-4 flex items-center justify-between hover:bg-slate-50 transition-colors rounded-xl px-2 group cursor-pointer"
-              >
-                <span class="text-sm font-medium text-slate-700">차단한 사용자 관리</span>
-                <ChevronRight
-                  class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition-transform"
-                />
-              </router-link>
-
-              <div class="w-full py-4 flex items-center justify-between px-2">
-                <span class="text-sm font-medium text-slate-700">안심번호 사용 설정</span>
-                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md"
-                  >사용 중</span
-                >
-              </div>
+      <div class="pb-12">
+        <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-900 mb-4">앱 정보</h3>
+          <div class="space-y-3 text-sm text-slate-500">
+            <div class="flex justify-between">
+              <span>현재 버전</span>
+              <span class="font-bold text-slate-800">v1.2.4</span>
             </div>
-          </section>
-
-          <div class="pb-12">
-            <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-              <h3 class="text-sm font-bold text-slate-900 mb-4">앱 정보</h3>
-              <div class="space-y-3 text-sm text-slate-500">
-                <div class="flex justify-between">
-                  <span>현재 버전</span>
-                  <span class="font-bold text-slate-800">v1.2.4</span>
-                </div>
-                <router-link
-                  to="/terms"
-                  class="flex justify-between cursor-pointer hover:text-indigo-600 group transition-colors"
-                >
-                  <span class="group-hover:font-semibold">이용약관</span>
-                  <ExternalLink class="w-4 h-4" />
-                </router-link>
-                <router-link
-                  to="/privacy"
-                  class="flex justify-between cursor-pointer hover:text-indigo-600 group transition-colors"
-                >
-                  <span class="group-hover:font-semibold">개인정보 처리방침</span>
-                  <ExternalLink class="w-4 h-4" />
-                </router-link>
-              </div>
+            <router-link
+              to="/terms"
+              class="flex justify-between cursor-pointer hover:text-indigo-600 group transition-colors"
+            >
+              <span class="group-hover:font-semibold">이용약관</span>
+              <ExternalLink class="w-4 h-4" />
+            </router-link>
+            <router-link
+              to="/privacy"
+              class="flex justify-between cursor-pointer hover:text-indigo-600 group transition-colors"
+            >
+              <span class="group-hover:font-semibold">개인정보 처리방침</span>
+              <ExternalLink class="w-4 h-4" />
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
