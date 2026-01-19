@@ -5,6 +5,8 @@ import { useAuthStore } from '@/stores/auth'
 import { ArrowLeft, Lock, KeyRound, CheckCircle2 } from 'lucide-vue-next'
 import AuthBaseInput from '../../components/auth/AuthBaseInput.vue'
 import PasswordPolicy from '../../components/auth/PasswordPolicy.vue'
+import SettingPageLayout from '@/components/setting/SettingPageLayout.vue'
+import Setting from '../info/Setting.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -104,87 +106,66 @@ const handleChangePassword = () => {
 </script>
 
 <template>
-  <div class="h-full flex gap-4 p-4 overflow-hidden relative">
-    <div class="hidden md:block w-20 shrink-0"></div>
+  <SettingPageLayout
+    title="비밀번호 변경"
+    description="소중한 개인정보 보호를 위해 주기적인 변경을 권장합니다."
+  >
+    <div class="w-full max-w-lg space-y-8 mt-4">
+      <AuthBaseInput
+        v-model="changePasswordForm.current"
+        label="현재 비밀번호"
+        type="password"
+        variant="settings"
+        bg-color="bg-white"
+        placeholder="사용 중인 비밀번호를 입력하세요"
+        icon-position="right"
+        :icon="Lock"
+      />
 
-    <div
-      class="flex-1 glass-panel rounded-[2.5rem] overflow-hidden flex flex-col bg-white/90 backdrop-blur border border-white/50 shadow-xl"
-    >
-      <div class="p-8 border-b border-slate-100 flex items-center gap-4">
-        <button
-          @click="router.back()"
-          class="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-500"
-        >
-          <ArrowLeft class="w-6 h-6" />
-        </button>
-        <div>
-          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">비밀번호 변경</h1>
-          <p class="text-sm text-slate-400 font-medium mt-1">
-            소중한 개인정보 보호를 위해 주기적인 변경을 권장합니다.
-          </p>
-        </div>
+      <div class="h-px bg-slate-100 w-full my-6"></div>
+
+      <div class="space-y-4">
+        <AuthBaseInput
+          v-model="changePasswordForm.new"
+          label="새 비밀번호"
+          type="password"
+          variant="settings"
+          placeholder="새로운 비밀번호 (8자 이상)"
+          icon-position="right"
+          :icon="KeyRound"
+          :error="passwordInputError.new.errorMessage"
+          @blur="passwordRules"
+        />
+
+        <AuthBaseInput
+          v-model="changePasswordForm.confirm"
+          label="새 비밀번호 확인"
+          type="password"
+          variant="settings"
+          placeholder="새로운 비밀번호를 한 번 더 입력하세요"
+          icon-position="right"
+          :icon="CheckCircle2"
+          :error="passwordInputError.confirm.errorMessage"
+          @blur="checkConfirmPassword"
+        />
       </div>
-
-      <div class="flex-1 overflow-y-auto custom-scroll p-8 flex flex-col items-center">
-        <div class="w-full max-w-lg space-y-8 mt-4">
-          <AuthBaseInput
-            v-model="changePasswordForm.current"
-            label="현재 비밀번호"
-            type="password"
-            variant="settings"
-            bg-color="bg-white"
-            placeholder="사용 중인 비밀번호를 입력하세요"
-            icon-position="right"
-            :icon="Lock"
-          />
-
-          <div class="h-px bg-slate-100 w-full my-6"></div>
-
-          <div class="space-y-4">
-            <AuthBaseInput
-              v-model="changePasswordForm.new"
-              label="새 비밀번호"
-              type="password"
-              variant="settings"
-              placeholder="새로운 비밀번호 (8자 이상)"
-              icon-position="right"
-              :icon="KeyRound"
-              :error="passwordInputError.new.errorMessage"
-              @blur="passwordRules"
-            />
-
-            <AuthBaseInput
-              v-model="changePasswordForm.confirm"
-              label="새 비밀번호 확인"
-              type="password"
-              variant="settings"
-              placeholder="새로운 비밀번호를 한 번 더 입력하세요"
-              icon-position="right"
-              :icon="CheckCircle2"
-              :error="passwordInputError.confirm.errorMessage"
-              @blur="checkConfirmPassword"
-            />
-          </div>
-          
-          <PasswordPolicy/>
-        </div>
-      </div>
-
-      <div class="p-8 border-t border-slate-100 bg-white/50 flex justify-end gap-3">
-        <button
-          @click="router.back()"
-          class="px-8 py-4 rounded-2xl font-bold text-slate-500 hover:bg-slate-100 transition-all"
-        >
-          취소
-        </button>
-        <button
-          :disabled="!isFormValid"
-          @click="handleChangePassword"
-          class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-        >
-          비밀번호 변경하기
-        </button>
-      </div>
+      <PasswordPolicy />
     </div>
-  </div>
+    
+    <template #footer>
+      <button
+        @click="router.back()"
+        class="px-8 py-4 rounded-2xl font-bold text-slate-500 hover:bg-slate-100 transition-all"
+      >
+        취소
+      </button>
+      <button
+        :disabled="!isFormValid"
+        @click="handleChangePassword"
+        class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl transition-all active:scale-95 disabled:opacity-50"
+      >
+        비밀번호 변경하기
+      </button>
+    </template>
+  </SettingPageLayout>
 </template>
