@@ -1,6 +1,5 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { ArrowLeft } from 'lucide-vue-next'
 
 const router = useRouter()
 defineProps({

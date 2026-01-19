@@ -38,8 +38,7 @@ onMounted(() => {
     <div id="navbar-container" class="w-20 h-full shrink-0 rounded-[2.5rem]"></div>
 
     <div class="flex-1 glass-panel rounded-[2.5rem] overflow-hidden flex flex-col">
-      
-        <PageHeader title="공지사항 상세" description="탈래말래의 새로운 소식을 확인하세요." />
+      <PageHeader title="공지사항 상세" description="탈래말래의 새로운 소식을 확인하세요." />
       <div class="flex-1 overflow-y-auto custom-scroll p-8">
         <div class="max-w-5xl mx-auto">
           <div v-if="isLoading" class="text-center py-20">

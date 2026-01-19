@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { ChevronDown, List } from 'lucide-vue-next' // 아이콘 직접 임포트
 import api from '@/api/notice/index.js'
 import PageHeader from '@/components/layout/PageHeader.vue'
+import NoticeTabButton from '@/components/notice/NoticeTabButton.vue'
+import NoticeCard from '@/components/notice/NoticeCard.vue'
 
 // 상태 관리
 const activeTab = ref('notice')
@@ -84,54 +86,10 @@ onMounted(() => {
               </button>
             </div>
 
-            <div
-              v-if="activeTab === 'notice'"
-              class="tab-content flex-1 overflow-y-auto custom-scroll p-8 space-y-4"
-            >
-              <div v-if="noticeList.length === 0" class="py-20 text-center text-slate-400">
-                등록된 공지사항이 없습니다.
-              </div>
-              <RouterLink
-                v-for="(item, index) in noticeList"
-                :key="item.id || index"
-                :to="{ name: 'noticedetail', params: { num: item.id } }"
-                custom
-                v-slot="{ navigate }"
-              >
-                <div
-                  @click="navigate"
-                  class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:border-indigo-100 hover:shadow-md transition-all cursor-pointer group"
-                >
-                  <div class="flex justify-between items-center mb-4">
-                    <div class="flex gap-2">
-                      <span
-                        :class="[
-                          item.tagClass || 'bg-indigo-100 text-indigo-600',
-                          'text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider',
-                        ]"
-                      >
-                        {{ item.tag || '공지' }}
-                      </span>
-                      <span
-                        v-if="item.isEssential"
-                        class="bg-slate-100 text-slate-500 text-[10px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider"
-                      >
-                        필독
-                      </span>
-                    </div>
-                    <span class="text-[11px] font-medium text-slate-400">{{ item.date }}</span>
-                  </div>
-                  <h3
-                    class="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
-                  >
-                    {{ item.title }}
-                  </h3>
-                  <p class="text-sm text-slate-500 mt-2 leading-relaxed line-clamp-2">
-                    {{ item.description }}
-                  </p>
-                </div>
-              </RouterLink>
-            </div>
+            <div v-if="activeTab === 'notice'" class="tab-content flex-1 overflow-y-auto custom-scroll p-8 space-y-4">
+          <div v-if="noticeList.length === 0" class="py-20 text-center text-slate-400">등록된 공지사항이 없습니다.</div>
+          <NoticeCard v-for="item in noticeList" :key="item.id" :item="item" />
+        </div>
 
             <div
               v-if="activeTab === 'faq'"
