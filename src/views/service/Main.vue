@@ -110,7 +110,8 @@ onMounted(async () => {
     }
 
     // 2. 소켓 연결 시작 (방어 코드 적용된 핸들러 전달)
-    const wsUrl = `ws://127.0.0.1:8080/ws/chat?userId=${encodeURIComponent(authStore.user.id)}`
+    const baseUrl = import.meta.env.VITE_WS_URL
+    const wsUrl = `${baseUrl}?userId=${encodeURIComponent(authStore.user.id)}`
     connect(wsUrl, handleSocketMessage)
 
     // 3. 초기 데이터 로드
