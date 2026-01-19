@@ -1,25 +1,76 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { KeyRound, Lock, CheckCircle2, AlertCircle } from 'lucide-vue-next'
+import { KeyRound, Lock, CheckCircle2, Check } from 'lucide-vue-next'
+import AuthBaseInput from '@/components/auth/AuthBaseInput.vue'
 
 const router = useRouter()
+
+// --- 상태 관리 ---
 const password = ref('')
-const confirmPassword = ref('')
+const passwordConfirm = ref('')
 const isModalOpen = ref(false)
 
-const handleReset = () => {
-    if (password.value.length < 8) {
-        alert('비밀번호는 8자 이상이어야 합니다.')
-        return
-    }
-    if (password.value !== confirmPassword.value) {
-        alert('비밀번호가 일치하지 않습니다.')
-        return
-    }
+// --- 에러 메시지 상태 ---
+const inputError = reactive({
+    password: { errorMessage: null },
+    confirm: { errorMessage: null }
+})
 
-    // 성공 모달 표시
-    isModalOpen.value = true
+// --- 실시간 유효성 검사 (버튼 활성화용) ---
+const isFormValid = computed(() => {
+    const hasLower = /[a-z]/.test(password.value)
+    const hasNumber = /[0-9]/.test(password.value)
+    const hasSpecial = /[!@$]/.test(password.value)
+    const isLenValid = password.value.length >= 8
+
+    const isPasswordValid = hasLower && hasNumber && hasSpecial && isLenValid
+    const isConfirmValid = password.value === passwordConfirm.value && passwordConfirm.value !== ''
+
+    return isPasswordValid && isConfirmValid
+})
+
+// --- 검사 규칙 (Blur 시 호출) ---
+const passwordRules = () => {
+    const hasLower = /[a-z]/.test(password.value)
+    const hasNumber = /[0-9]/.test(password.value)
+    const hasSpecial = /[!@$]/.test(password.value)
+
+    if (!password.value) {
+        inputError.password.errorMessage = '새 비밀번호를 입력해주세요.'
+    } else if (password.value.length < 8) {
+        inputError.password.errorMessage = '비밀번호는 8자 이상이어야 합니다.'
+    } else if (!(hasLower && hasNumber && hasSpecial)) {
+        inputError.password.errorMessage = '영문 소문자, 숫자, 특수문자(!@$)를 포함해야 합니다.'
+    } else {
+        inputError.password.errorMessage = null
+    }
+}
+
+const confirmRules = () => {
+    if (!passwordConfirm.value) {
+        inputError.confirm.errorMessage = '비밀번호 확인을 입력해주세요.'
+    } else if (password.value !== passwordConfirm.value) {
+        inputError.confirm.errorMessage = '비밀번호가 일치하지 않습니다.'
+    } else {
+        inputError.confirm.errorMessage = null
+    }
+}
+
+// --- 비밀번호 재설정 요청 ---
+const handleReset = async () => {
+    if (!isFormValid.value) return
+
+    try {
+        // 실제 API 호출 로직이 들어갈 자리 (예: await api.resetPassword(...))
+        console.log('비밀번호 변경 요청:', password.value)
+        
+        // 성공 시 모달 오픈
+        isModalOpen.value = true
+    } catch (error) {
+        console.error('비밀번호 변경 실패:', error)
+        alert('변경 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
 }
 </script>
 
@@ -39,36 +90,33 @@ const handleReset = () => {
             </div>
 
             <form @submit.prevent="handleReset" class="mt-8 space-y-5">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">새 비밀번호</label>
-                    <div
-                        class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
-                        <Lock class="absolute left-4 w-5 h-5 text-slate-400" />
-                        <input v-model="password" type="password" placeholder="8자 이상 입력"
-                            class="w-full pl-12 pr-4 py-4 bg-transparent outline-none text-sm" />
-                    </div>
-                    <p v-if="password && password.length < 8"
-                        class="text-xs text-rose-500 ml-1 flex items-center gap-1">
-                        <AlertCircle class="w-3 h-3" /> 8자 이상 입력해주세요.
-                    </p>
-                </div>
+                <AuthBaseInput 
+                    v-model="password"
+                    label="새 비밀번호"
+                    label-class="text-xs text-slate-400 uppercase"
+                    type="password"
+                    placeholder="8자 이상, 소문자/숫자/특수문자 포함"
+                    :icon="Lock"
+                    :error="inputError.password.errorMessage"
+                    @blur="passwordRules"
+                />
 
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">비밀번호 확인</label>
-                    <div
-                        class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
-                        <CheckCircle2 class="absolute left-4 w-5 h-5 text-slate-400" />
-                        <input v-model="confirmPassword" type="password" placeholder="한 번 더 입력"
-                            class="w-full pl-12 pr-4 py-4 bg-transparent outline-none text-sm" />
-                    </div>
-                    <p v-if="confirmPassword && password !== confirmPassword"
-                        class="text-xs text-rose-500 ml-1 flex items-center gap-1">
-                        <AlertCircle class="w-3 h-3" /> 비밀번호가 일치하지 않습니다.
-                    </p>
-                </div>
+                <AuthBaseInput 
+                    v-model="passwordConfirm"
+                    label="비밀번호 확인"
+                    label-class="text-xs text-slate-400 uppercase"
+                    type="password"
+                    placeholder="비밀번호 재입력"
+                    :icon="Check"
+                    :error="inputError.confirm.errorMessage"
+                    @blur="confirmRules"
+                />
 
-                <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] mt-4">
+                <button 
+                    type="submit"
+                    :disabled="!isFormValid"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
+                >
                     변경 완료
                 </button>
             </form>
