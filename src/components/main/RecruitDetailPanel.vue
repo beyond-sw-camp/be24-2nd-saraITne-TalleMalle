@@ -71,9 +71,6 @@ const joinButtonState = computed(() => {
 
         <div class="p-8 border-b border-slate-100 flex items-center justify-between">
             <h3 class="font-bold text-slate-900 text-lg">상세 정보</h3>
-            <button @click="emit('close')" class="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                <X class="w-6 h-6" />
-            </button>
         </div>
 
         <div v-if="recruit" class="flex-1 overflow-y-auto custom-scroll p-8 space-y-8">

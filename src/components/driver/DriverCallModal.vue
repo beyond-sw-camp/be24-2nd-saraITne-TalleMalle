@@ -1,9 +1,15 @@
 <script setup>
+/**
+ * ==============================================================================
+ * 2. CONFIG & STORES
+ * ==============================================================================
+ */
 defineProps({
   show: Boolean,
-  departure: String, 
+  departure: String,
   destination: String
 })
+
 defineEmits(['accept', 'reject'])
 </script>
 
