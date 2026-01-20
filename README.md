@@ -242,51 +242,16 @@
 
 # 🎥 기능 테스트
 
-<details>
-<summary>메인 & 지도</summary>
 
-<br/>
+▶️ [메인 & 지도 영상 보기](video/driverpage.mp4)
 
-<video src="" width="700" controls></video>
+▶️ [모집 영상 보기](video/driverpage.mp4)
 
-</details>
+▶️ [채팅 시연 영상 보기](video/driverpage.mp4)
 
-<details>
-<summary>모집글 작성</summary>
+▶️ [마이 페이지 시연 영상 보기](video/driverpage.mp4)
 
-<br/>
-
-<video src="" width="700" controls></video>
-
-</details>
-
-<details>
-<summary>채팅</summary>
-
-<br/>
-
-<video src="" width="700" controls></video>
-
-</details>
-
-
-<details>
-<summary>마이페이지</summary>
-
-<br/>
-
-<video src="" width="700" controls></video>
-
-</details>
-
-<details>
-<summary>기사 전용 페이지</summary>
-
-<br/>
-
-<video src="video/driverpage.mp4" width="700" controls></video>
-
-</details>
+▶️ [기사 전용 페이지 시연 영상 보기](video/driverpage.mp4)
 
 ---
 
