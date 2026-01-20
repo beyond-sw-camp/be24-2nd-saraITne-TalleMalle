@@ -80,11 +80,7 @@
 
 ---
 
-## 🚀 프로젝트 소개
-
-### 🎯 서비스 한 줄 요약
-
-**TalleMalle은 같은 경로로 이동하는 사람들을 실시간으로 연결하는 위치 기반 동승 커뮤니티 서비스**
+# 🚀 프로젝트 소개
 
 <table width="100%">
   <thead>
@@ -97,30 +93,37 @@
   <tbody>
     <tr>
       <td valign="top">
-        <br />
-        <a href="https://www.testjake.kro.kr/">
-          <img src="https://img.shields.io/badge/TalleMalle-사용자_사이트-blue?style=for-the-badge&logo=googlechrome&logoColor=white">
-        </a>
-        <br /><br />
-        <a href="https://driver.testjake.kro.kr/">
-          <img src="https://img.shields.io/badge/TalleMalle-기사님_사이트-4dabf7?style=for-the-badge&logo=googlechrome&logoColor=white">
-        </a>
+        <p>
+          <a href="https://www.testjake.kro.kr/">
+            <img src="https://img.shields.io/badge/TalleMalle-사용자_사이트-blue?style=for-the-badge&logo=googlechrome&logoColor=white">
+          </a>
+          &nbsp;
+          <a href="https://driver.testjake.kro.kr/">
+            <img src="https://img.shields.io/badge/TalleMalle-기사님_사이트-4dabf7?style=for-the-badge&logo=googlechrome&logoColor=white">
+          </a>
+        </p>
       </td>
       <td valign="top">
-        <br />
-        <a href="https://www.figma.com/design/6BxeWDZ9Ex9Xqae0dqT3tJ/TalleMalle">
-          <img src="https://img.shields.io/badge/Figma-보러가기-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
-        </a>
+        <p>
+          <a href="https://www.figma.com/design/6BxeWDZ9Ex9Xqae0dqT3tJ/TalleMalle">
+            <img src="https://img.shields.io/badge/Figma-보러가기-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
+          </a>
+        </p>
       </td>
       <td valign="top">
-        <br />
-        <a href="https://docs.google.com/spreadsheets/d/1iabBDvrhTMOP8ass_cav91xfmSoGrhqvT-ViAemRS54/edit?usp=sharing">
-          <img src="https://img.shields.io/badge/API-명세서-6DB33F?style=for-the-badge&logo=swagger&logoColor=white">
-        </a>
+        <p>
+          <a href="https://docs.google.com/spreadsheets/d/1iabBDvrhTMOP8ass_cav91xfmSoGrhqvT-ViAemRS54/edit?usp=sharing">
+            <img src="https://img.shields.io/badge/API-명세서-6DB33F?style=for-the-badge&logo=swagger&logoColor=white">
+          </a>
+        </p>
       </td>
     </tr>
   </tbody>
 </table>
+
+### 🎯 서비스 한 줄 요약
+
+**TalleMalle은 같은 경로로 이동하는 사람들을 실시간으로 연결하는 위치 기반 동승 커뮤니티 서비스**
 
 ---
 
@@ -132,17 +135,16 @@
 
   ➡️ 이를 해결하기 위해 지도 기반 실시간 동승 커뮤니티 형태의 서비스를 기획했습니다.
 
----
 
-## ✨ 핵심 기능
+### ✨ 핵심 기능
 
-| 기능 | 설명 |
-| --- | --- |
-| 📝 동승 모집글 작성 | 출발/도착 위치, 시간, 인원 설정 |
+| 기능                | 설명                                   |
+| ------------------- | -------------------------------------- |
+| 📝 동승 모집글 작성 | 출발/도착 위치, 시간, 인원 설정        |
 | 🗺 실시간 지도 매칭 | 지도 이동 기준 주변 모집글 실시간 조회 |
-| 🤝 참여 요청 & 승인 | 모집 상태에 따른 버튼/권한 분기 |
-| 💬 실시간 채팅 UI | WebSocket 기반 참여자 전용 채팅 |
-| 👤 마이페이지 | 참여 이력, 작성 글, 프로필 관리 |
+| 🤝 참여 요청 & 승인 | 모집 상태에 따른 버튼/권한 분기        |
+| 💬 실시간 채팅 UI   | WebSocket 기반 참여자 전용 채팅        |
+| 👤 마이페이지       | 참여 이력, 작성 글, 프로필 관리        |
 
 ---
 
@@ -164,15 +166,14 @@
 
 - 참여자/모집자 권한에 따른 UI 분기
 
----
 
-## 🔄 서비스 흐름
+### 🔄 서비스 흐름
 
 회원가입 / 로그인 ➡️ 지도에서 주변 동승글 탐색 ➡️ 모집글 참여 요청 ➡️ 승인 후 채팅방 입장 ➡️ 동승 이동
 
 ---
 
-## 📸 서비스 화면
+# 📸 서비스 화면
 
 <details>
 <summary>로그인</summary>
@@ -239,17 +240,58 @@
 
 ---
 
-## 🎥 기능 테스트
+# 🎥 기능 테스트
 
-- 🗺 메인 & 지도: 링크
-- 📝 모집글 작성: 링크
-- 💬 채팅: 링크
-- 👤 마이페이지: 링크
+<details>
+<summary>메인 & 지도</summary>
+
+<br/>
+
+<video src="/img/driverpage.mp4" width="700" controls></video>
+
+</details>
+
+<details>
+<summary>모집글 작성</summary>
+
+<br/>
+
+<video src="/img/driverpage.mp4" width="700" controls></video>
+
+</details>
+
+<details>
+<summary>채팅</summary>
+
+<br/>
+
+<video src="/img/driverpage.mp4" width="700" controls></video>
+
+</details>
+
+
+<details>
+<summary>마이페이지</summary>
+
+<br/>
+
+<video src="/img/driverpage.mp4" width="700" controls></video>
+
+</details>
+
+<details>
+<summary>기사 전용 페이지</summary>
+
+<br/>
+
+<video src="/img/driverpage.mp4" width="700" controls></video>
+
+</details>
 
 ---
 
 <div align="center">
 
-## 🚕 Thanks for riding with TalleMalle!
+# 🚕 Thanks for riding with TalleMalle!
 
 </div>
