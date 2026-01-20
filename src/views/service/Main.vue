@@ -55,6 +55,7 @@ const selectedRecruit = ref(null)
 const displayRoute = ref('경로 미지정')
 
 // UI 상태 (모달, 패널 등)
+const isListPanelOpen = ref(true)
 const isPanelOpen = ref(false)
 const isDetailOpen = ref(false)
 const isCreateModalOpen = ref(false)
@@ -166,7 +167,7 @@ const handleSocketMessage = (event) => {
     if (data.payload && typeof data.payload === 'string') {
       try {
         data = JSON.parse(data.payload)
-      } catch (e) {}
+      } catch (e) { }
     }
 
     if (!data || typeof data !== 'object') return
@@ -265,12 +266,20 @@ const handleCreateSubmit = (formData) => {
  * 7. METHODS - UI INTERACTION (화면 조작)
  * ==============================================================================
  */
+// 리스트 패널 토글 함수 (버튼 누르면 실행)
+const toggleListPanel = () => {
+  isListPanelOpen.value = !isListPanelOpen.value
+}
+
 // 리스트 아이템 클릭 (상세 패널 열기)
 const handleSelectRecruit = (recruit) => {
+  isListPanelOpen.value = true
   if (isDetailOpen.value && selectedRecruit.value?.id === recruit.id) {
+    // 이미 선택된 거 누르면 다시 닫기
     isDetailOpen.value = false
     selectedRecruit.value = null
   } else {
+    // 새로운 마커 선택 시
     selectedRecruit.value = recruit
     isDetailOpen.value = true
     // 지도 이동
@@ -300,7 +309,6 @@ const joinChat = () => {
   const timeInfo = recruit.time || recruit.startTime || '시간 미정'
 
   // 선택된 모집(selectedRecruit)의 정보를 스토어에 저장
-  // ChatView.vue에서 이 정보를 가져다 씁니다.
   const rideInfoPayload = {
     driver: {
       name: '매칭 대기중',
@@ -310,7 +318,6 @@ const joinChat = () => {
     },
     route: {
       // selectedRecruit 객체의 필드명에 따라 수정이 필요할 수 있습니다.
-      // (예: startPoint, startLocation 등)
       start: startName,
       dest: destName,
       startTime: timeInfo,
@@ -346,55 +353,114 @@ const moveToCurrentLocation = () => mapComponent.value?.panToCurrent()
 
 <template>
   <div class="relative w-full h-full">
-    <Map
-      ref="mapComponent"
-      :recruit-list="recruitList"
-      :center-offset="mapCenterOffset"
-      @update-location="handleLocationUpdate"
-      @marker-click="handleSelectRecruit"
-      @update-visible-list="handleVisibleListUpdate"
-    />
+    <Map ref="mapComponent" :recruit-list="recruitList" :center-offset="mapCenterOffset"
+      @update-location="handleLocationUpdate" @marker-click="handleSelectRecruit"
+      @update-visible-list="handleVisibleListUpdate" />
 
     <div class="absolute inset-0 z-10 flex p-4 pointer-events-none">
-      <div class="hidden md:block w-20 shrink-0 mr-4"></div>
 
-      <RecruitListPanel
-        :recruit-list="displayRecruitList"
-        :is-open="true"
-        :selected-id="selectedRecruit?.id"
-        :is-socket-connected="isConnected"
-        @expand="isPanelOpen = true"
-        @select="handleSelectRecruit"
-      />
+      <div class="hidden md:block w-20 shrink-0 h-full"></div>
 
-      <RecruitDetailPanel
-        :recruit="selectedRecruit"
-        :is-open="isDetailOpen"
-        :my-status="myStatus"
-        :my-recruit-id="myRecruitId"
-        @close="isDetailOpen = false"
-        @join="joinChat"
-      />
+      <div class="flex h-full items-center">
+
+        <Transition name="slide-fade">
+          <div v-show="isListPanelOpen"
+            class="pointer-events-auto h-full shadow-xl z-20 ml-4 rounded-3xl overflow-hidden">
+            <RecruitListPanel :recruit-list="displayRecruitList" :is-open="true" :selected-id="selectedRecruit?.id"
+              :is-socket-connected="isConnected" @expand="isPanelOpen = true" @select="handleSelectRecruit" />
+          </div>
+        </Transition>
+
+        <button v-show="!isDetailOpen" @click="toggleListPanel"
+          class="pointer-events-auto w-6 h-12 bg-white border-y border-r border-slate-200 rounded-r-md shadow-md flex items-center justify-center hover:bg-slate-50 text-slate-400 z-10 -ml-[1px]"
+          :class="{ 'self-center': isListPanelOpen }" title="목록 토글">
+          <span v-if="isListPanelOpen">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </span>
+          <span v-else>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <Transition name="slide-shrink">
+        <div v-if="isDetailOpen" class="flex h-full items-center">
+
+          <div class="pointer-events-auto h-full">
+            <RecruitDetailPanel :recruit="selectedRecruit" :is-open="isDetailOpen" :my-status="myStatus"
+              :my-recruit-id="myRecruitId" @close="isDetailOpen = false" @join="joinChat" />
+          </div>
+
+          <button @click="isDetailOpen = false"
+            class="pointer-events-auto w-6 h-12 bg-white border-y border-r border-slate-200 rounded-r-md shadow-md flex items-center justify-center hover:bg-slate-50 text-slate-400 z-10 -ml-[1px]"
+            title="상세정보 닫기">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+
+        </div>
+      </Transition>
     </div>
+    <MapControls :nickname="authStore.user?.userName" @zoom-in="zoomIn" @zoom-out="zoomOut"
+      @move-location="moveToCurrentLocation" />
 
-    <MapControls
-      :nickname="authStore.user?.userName"
-      @zoom-in="zoomIn"
-      @zoom-out="zoomOut"
-      @move-location="moveToCurrentLocation"
-    />
+    <BottomActionBar :class="bottomBarClass" :route-info="displayRoute" :button-state="actionButtonState"
+      @open-create="isCreateModalOpen = true" />
 
-    <BottomActionBar
-      :class="bottomBarClass"
-      :route-info="displayRoute"
-      :button-state="actionButtonState"
-      @open-create="isCreateModalOpen = true"
-    />
-
-    <CreateRecruitModal
-      :is-open="isCreateModalOpen"
-      @close="isCreateModalOpen = false"
-      @submit="handleCreateSubmit"
-    />
+    <CreateRecruitModal :is-open="isCreateModalOpen" @close="isCreateModalOpen = false" @submit="handleCreateSubmit" />
   </div>
 </template>
+<style scoped>
+/* 1. 리스트 패널 애니메이션 */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+
+  /* ★ 핵심 1: 800px -> 400px로 수정 
+     (실제 패널 너비보다 살짝만 크게 잡아야 반응이 빠릅니다) */
+  max-width: 400px;
+  opacity: 1;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(-100%);
+  max-width: 0;
+  opacity: 0;
+  margin-left: 0 !important;
+}
+
+/* 2. 상세 패널 애니메이션 (변동 없음) */
+.slide-shrink-enter-active,
+.slide-shrink-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  max-width: 400px;
+  /* 여기도 400px로 맞추면 더 좋습니다 */
+  opacity: 1;
+}
+
+.slide-shrink-enter-from,
+.slide-shrink-leave-to {
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* 3. 버튼 애니메이션 수정 */
+button {
+  /* ★ 핵심 2: 위치 이동(all)에 대한 transition 제거 */
+  /* 배경색이나 테두리 색상만 부드럽게 바뀌도록 한정합니다. */
+  transition: background-color 0.2s, color 0.2s;
+}
+</style>
