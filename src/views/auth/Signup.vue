@@ -22,7 +22,7 @@ const router = useRouter()
  * ==============================================================================
  * 3. STATE & REFS (상태 변수 및 Computed)
  * ==============================================================================
-*/
+ */
 // 회원가입 폼 데이터
 const signupForm = reactive({
   email: '',
@@ -117,23 +117,23 @@ const passwordRules = () => {
  * 5. METHODS - API & NETWORK (서버 연동)
  * ==============================================================================
  */
-const handlesignup = async () => {
+// --- 회원가입 처리 ---
+const handleSignup = async () => {
   if (!isFormValid.value) return
 
   try {
-    console.log('회원가입 요청 데이터 전송:', signupForm)
     const res = await api.signup(signupForm)
-    console.log('Signup Response:', res)
+    
+    // 성공 시 처리 (HTTP 200, 201 등 2xx 응답)
+    // console.log('Signup Response:', res)
+    alert('회원가입이 완료되었습니다. 로그인해주세요.')
+    router.push('/login')
 
-    if (res.status === 200 || res.status === 201) {
-      alert('회원가입이 완료되었습니다. 로그인해주세요.')
-      router.push('/login')
-    } else {
-      alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-    }
   } catch (error) {
-    console.error('회원가입 에러:', error)
-    alert('회원가입 중 오류가 발생했습니다.')
+    // API 서버에서 오는 400, 500번대 에러는 모두 이쪽으로 들어옵니다.
+    console.error('회원가입 실패:', error)
+    const message = error.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.'
+    alert(message)
   }
 }
 </script>
@@ -146,7 +146,7 @@ const handlesignup = async () => {
         <p class="text-slate-500 mt-2 text-sm">간편하게 가입하고 서비스를 이용해보세요.</p>
       </template>
 
-      <form class="p-8 pt-4 space-y-5" @submit.prevent="handlesignup">
+      <form class="p-8 pt-4 space-y-5" @submit.prevent="handleSignup">
         <AuthBaseInput
           v-model="signupForm.email"
           label="이메일 계정"
