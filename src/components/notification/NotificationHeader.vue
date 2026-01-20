@@ -1,9 +1,28 @@
 <script setup>
+/**
+ * ==============================================================================
+ * 1. IMPORTS
+ * ==============================================================================
+ */
 import { ArrowLeft, Check } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 
+/**
+ * ==============================================================================
+ * 2. CONFIG & STORES
+ * ==============================================================================
+ */
 const router = useRouter()
 defineEmits(['markAllRead'])
+
+/**
+ * ==============================================================================
+ * 3. METHODS - FUNCTIONAL
+ * ==============================================================================
+ */
+const goBack = () => {
+    router.back()
+}
 </script>
 
 <template>
@@ -11,7 +30,7 @@ defineEmits(['markAllRead'])
         <div class="max-w-4xl mx-auto w-full flex justify-between items-end">
             <div>
                 <div class="flex items-center gap-2 md:hidden mb-4">
-                    <button @click="router.back()" class="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-500">
+                    <button @click="goBack" class="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-500">
                         <ArrowLeft class="w-6 h-6" />
                     </button>
                 </div>

@@ -1,44 +1,39 @@
 <script setup>
+/**
+ * ==============================================================================
+ * 1. IMPORTS
+ * ==============================================================================
+ */
 import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useNotificationStore } from '@/stores/notification'
-import { AlertCircle, Loader2, RefreshCcw } from 'lucide-vue-next' // ✅ 아이콘 추가 (로딩, 경고, 새로고침)
+import notificationApi from '@/api/notification'
+import { AlertCircle, Loader2, RefreshCcw } from 'lucide-vue-next'
+
+// Components
 import NotificationHeader from '@/components/notification/NotificationHeader.vue'
 import FilterTabButton from '@/components/notification/FilterTabButton.vue'
 import NotificationList from '@/components/notification/NotificationList.vue'
 
-// 스토어 연결
+/**
+ * ==============================================================================
+ * 2. CONFIG & STORES
+ * ==============================================================================
+ */
 const store = useNotificationStore()
-const { notifications } = storeToRefs(store)
 
-// 상태 관리 변수
+/**
+ * ==============================================================================
+ * 3. STATE & REFS (상태 변수 및 Computed)
+ * ==============================================================================
+ */
+// 상태 변수
+const { notifications } = storeToRefs(store)
 const isLoading = ref(false)
 const isError = ref(false)
+const activeFilter = ref('all')
 
-// 데이터 로드 함수 (API 에러를 여기서 잡아서 처리)
-const loadData = async () => {
-    isLoading.value = true
-    isError.value = false
-
-    try {
-        if (notifications.value.length === 0) {
-            await store.fetchNotifications()
-        }
-    } catch (error) {
-        console.error("View에서 에러 감지:", error)
-        // 에러 발생 시 상태 변경 -> 에러 화면 표시됨
-        isError.value = true
-    } finally {
-        isLoading.value = false
-    }
-}
-
-// 화면 켜질 때 실행
-onMounted(() => {
-    loadData()
-})
-
-// 필터 탭 종류
+// 상수 (옵션)
 const filterOptions = [
     { key: 'all', label: '전체' },
     { key: 'matching', label: '매칭' },
@@ -46,9 +41,7 @@ const filterOptions = [
     { key: 'event', label: '이벤트' }
 ]
 
-const activeFilter = ref('all')
-
-// 리스트 필터링 및 정렬 (읽은 알림은 아래로)
+// Computed: 리스트 필터링 및 정렬
 const filteredList = computed(() => {
     // 1. 필터링
     const list = activeFilter.value === 'all'
@@ -60,6 +53,42 @@ const filteredList = computed(() => {
         if (a.isRead === b.isRead) return 0
         return a.isRead ? 1 : -1
     })
+})
+
+/**
+ * ==============================================================================
+ * 5. METHODS - API & NETWORK (데이터 로드)
+ * ==============================================================================
+ */
+// 데이터 로드 함수 (API 에러 핸들링 포함)
+const loadData = async () => {
+    isLoading.value = true
+    isError.value = false
+
+    try {
+        // 1. API 호출
+        const res = await notificationApi.getNotificationList()
+
+        // 2. 결과가 있으면 Store에 저장
+        if (res && res.data) {
+            store.setNotifications(res.data)
+        }
+    } catch (error) {
+        // 3. 예외 처리
+        console.error("알림 데이터 로드 실패:", error)
+        isError.value = true
+    } finally {
+        isLoading.value = false
+    }
+}
+
+/**
+ * ==============================================================================
+ * 6. LIFECYCLE
+ * ==============================================================================
+ */
+onMounted(() => {
+    loadData()
 })
 </script>
 
