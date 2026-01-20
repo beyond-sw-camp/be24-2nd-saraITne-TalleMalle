@@ -251,7 +251,12 @@
 
 ▶️ [마이 페이지 시연 영상 보기](video/driverpage.mp4)
 
-▶️ [기사 전용 페이지 시연 영상 보기](video/driverpage.mp4)
+<details>
+<summary>기사 전용 페이지 시연 영상</summary>
+
+[기사 전용 페이지 시연 영상 보기](https://github.com/user-attachments/assets/efaad669-b891-44fd-ad4d-4e2d74e94843)
+
+</details>
 
 ---
 
