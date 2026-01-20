@@ -242,8 +242,40 @@
 
 # 🎥 기능 테스트
 
+<details>
+<summary>🎬 [핵심 기능 시연 영상]</summary>
+<br>
 
-▶️ [메인 & 지도 영상 보기](video/driverpage.mp4)
+  <details>
+  <summary>📍 모집 생성하기</summary>
+  <br>
+
+  [모집 생성하기 시연 영상 보기](https://github.com/user-attachments/assets/71aded16-7a97-446d-aa00-a5eadd753d20)
+  </details>
+
+  <details>
+  <summary>🗺️ 지도 기능 (영역 필터링 및 오프셋)</summary>
+  <br>
+
+  [지도 기능 시연 영상 보기](https://github.com/user-attachments/assets/79223048-1e01-4eb4-806f-b99124371b92)
+  </details>
+
+  <details>
+  <summary>📋 모집 패널 필터링</summary>
+  <br>
+
+  [모집 패널 기능 시연 영상 보기](https://github.com/user-attachments/assets/ee4c3cc8-949b-4de9-a669-2594e16e6a7d)
+  </details>
+
+  <details>
+  <summary>💬 채팅 참여 및 상태별 버튼 제어</summary>
+  <br>
+
+  [채팅 참여 별 상태 확인 시연 영상 보기](https://github.com/user-attachments/assets/b84208b3-610f-4b6a-8a2a-846b3217c4e2)
+  </details>
+
+</details>
+
 
 ▶️ [모집 영상 보기](video/driverpage.mp4)
 
@@ -252,7 +284,7 @@
 ▶️ [마이 페이지 시연 영상 보기](video/driverpage.mp4)
 
 <details>
-<summary>기사 전용 페이지 시연 영상</summary>
+<summary>[기사 전용 페이지 시연 영상]</summary>
 
 [기사 전용 페이지 시연 영상 보기](https://github.com/user-attachments/assets/efaad669-b891-44fd-ad4d-4e2d74e94843)
 
