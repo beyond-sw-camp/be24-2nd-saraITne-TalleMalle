@@ -277,27 +277,27 @@ const handleSocketMessage = (data) => {
       }
     } catch (e) {}
   }
-  // 2. [쓰레기 데이터 차단] 지도/드라이버 전용 메시지 즉시 차단
-  // Chat.vue에서는 절대 쓰지 않는 type들이 들어오면 바로 함수 종료
+  // 1. [내용물 검사] 지도 데이터 특유의 속성(Key)이 있으면 즉시 차단
+  // 스크린샷의 데이터 구조: { lat, lng } 또는 { startLat, destLat, nickname }
+  if (data.lat !== undefined || data.lng !== undefined || data.startLat !== undefined || data.bearing !== undefined) {
+    return
+  }
+
+  // 2. [타입 검사] DriverPage에서 사용하는 타입명이 있다면 차단
   const ignoreTypes = ['driverLocation', 'drivingPath', 'newRecruit', 'createRecruit']
   if (data.type && ignoreTypes.includes(data.type)) return
 
-  // 3. [다른 방 메시지 차단] 방 번호(recruitId)가 존재하는데 내 방과 다르면 차단
-  // (이 코드가 있어야 "다른 방" 메시지가 안 들어옵니다)
+  // 3. [방 번호 검사] recruitId가 있는데 내 방과 다르면 차단
   if (data.recruitId && String(data.recruitId) !== String(recruitId.value)) return
 
-  // 4. [유효성 검사] 최소한의 채팅 포맷을 갖췄는지 확인
-  // type도 없고, text도 없는 데이터(예: 순수 좌표값 {lat:37...})가 들어오면 차단
-  // 지도 데이터가 type 없이 payload만 벗겨져서 들어올 경우를 대비한 2차 방어선입니다.
-  if (!data.type && !data.text && !data.userId) return
+  // 4. [필수 데이터 검사] 채팅 메시지의 자격 요건 확인
+  // 텍스트(text)도 없고, 이미지(image) 타입도 아니면 채팅으로 인정하지 않음
+  // (이 부분이 없으면 {lat:37...} 같은 객체가 강제로 채팅창에 뜸)
+  const hasText = data.text || data.msg || data.message || data.content
+  const isSpecialType = ['image', 'enter', 'leave', 'system'].includes(data.type)
 
+  if (!hasText && !isSpecialType) return
   // ============================================================
-
-  // [중요] 5. 허용된 타입만 처리 (화이트리스트)
-  // location 등을 제거하고 순수 채팅 관련 이벤트만 처리
-  const allowedTypes = ['enter', 'leave', 'exist', 'text', 'image', 'me', 'other', 'system']
-  // 데이터에 type이 명시되어 있다면, 허용 목록에 있는치 체크
-  if (data.type && !allowedTypes.includes(data.type)) return
 
   const now = new Date()
   const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
@@ -310,7 +310,12 @@ const handleSocketMessage = (data) => {
 
   if (typeof data === 'object' && data !== null) {
     textContent = data.text || data.msg || data.message || data.content
-    if (!textContent && msgType !== 'image') textContent = JSON.stringify(data)
+    // [중요 수정] 텍스트가 없다고해서 JSON.stringify(data)를 하는 코드를 삭제했습니다.
+    // 위 필터링을 통과했더라도 텍스트가 없으면 빈 문자열로 둡니다.
+    if (!textContent && msgType !== 'image') {
+       return // 텍스트도 없고 이미지도 아니면 그리지 않음
+    }
+    
     userId = data.userId || data.sender || 'Unknown'
     userName = data.userName || data.name
     userImg = data.userImg || data.img
@@ -346,7 +351,7 @@ const handleSocketMessage = (data) => {
     }
   }
 
-  // 4. 입장(enter) 시 Handshake (exist 메시지 응답)
+  // 4. 입장(enter) 시 Handshake
   if (msgType === 'enter') {
     if (socket && isConnected.value) {
       const existMsg = {
@@ -355,17 +360,6 @@ const handleSocketMessage = (data) => {
         userName: myUserName.value,
         userImg: myUserImg.value,
         text: '',
-        user: {
-          name: myUserName.value,
-          img: myUserImg.value,
-          lv: 'LV. 5',
-          meta: '현재 접속 중',
-          bio: '반갑습니다!',
-          score: 50,
-          rank: '일반',
-          stats: { time: 0, silent: 0 },
-          reviews: [],
-        },
       }
       socket.send(JSON.stringify(existMsg))
     }
