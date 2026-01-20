@@ -13,6 +13,7 @@ import ChatPanel from '@/components/chat/ChatPanel.vue' // 채팅 화면 (중앙
 import RideSidebar from '@/components/chat/RideSidebar.vue' // 참여자 목록 (우측)
 import ProfileModal from '@/components/chat/ProfileModal.vue' // 프로필 팝업
 import { useAuthStore } from '@/stores/auth' // 로그인 정보 저장소
+import { useRecruitStore } from '@/stores/recruit' // [NEW] 리크루트 스토어 임포트
 import { storeToRefs } from 'pinia'
 import api from '@/api/chat'
 
@@ -82,6 +83,9 @@ const currentProfile = reactive({
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 
+// [NEW] Recruit Store 연결
+const recruitStore = useRecruitStore()
+
 // 여정 정보 상태 변수 추가
 const rideInfo = ref(null)
 
@@ -131,17 +135,24 @@ const loadInitialData = async () => {
     // 로딩 시작 (화면에 '불러오는 중...' 표시)
     isLoading.value = true
 
+    // [UPDATE] 스토어에 여정 정보가 있는지 확인
+    const storeRideInfo = recruitStore.currentRideInfo
+
     // Promise.all을 사용하여 두 API를 동시에 호출합니다.
-    const [historyData, participantsData, rideDetailData] = await Promise.all([
-      api.getChatHistory(), // 채팅 내역 가져오기
-      api.getChatParticipants(), // 참여자 목록 가져오기
-      api.getRideDetail(), // 여정 정보 로드
+    const [historyData, participantsData, apiRideDetail] = await Promise.all([
+      api.getChatHistory(),
+      api.getChatParticipants(),
+      // 스토어에 정보가 있으면 API 호출 안 함 (불필요한 요청 방지)
+      !storeRideInfo ? api.getRideDetail() : Promise.resolve(null),
     ])
 
     // 받아온 데이터 적용
     messages.value = historyData || []
     usersData.value = participantsData || {}
-    rideInfo.value = rideDetailData || null // 데이터 저장
+
+    // [UPDATE] 스토어 데이터 우선 적용, 없으면 API 데이터 사용
+    rideInfo.value = storeRideInfo || apiRideDetail || null
+    //rideInfo.value = rideDetailData || null // 데이터 저장
 
     // 만약 'Unknown'(알수없음) 유저가 없다면 기본값으로 추가 (안전장치)
     if (!usersData.value['Unknown']) {
