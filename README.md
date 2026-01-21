@@ -262,33 +262,33 @@
 <summary>🎬 [핵심 기능 시연 영상]</summary>
 <br>
 
-  <details>
-  <summary>📍 모집 생성하기</summary>
-  <br>
-
-  [모집 생성하기 시연 영상 보기](https://github.com/user-attachments/assets/71aded16-7a97-446d-aa00-a5eadd753d20)
-  </details>
-
-  <details>
-  <summary>🗺️ 지도 기능 (영역 필터링 및 오프셋)</summary>
-  <br>
-
-  [지도 기능 시연 영상 보기](https://github.com/user-attachments/assets/79223048-1e01-4eb4-806f-b99124371b92)
-  </details>
-
-  <details>
-  <summary>📋 모집 패널 필터링</summary>
-  <br>
-
-  [모집 패널 기능 시연 영상 보기](https://github.com/user-attachments/assets/ee4c3cc8-949b-4de9-a669-2594e16e6a7d)
-  </details>
-
-  <details>
-  <summary>💬 채팅 참여 및 상태별 버튼 제어</summary>
-  <br>
-
-  [채팅 참여 별 상태 확인 시연 영상 보기](https://github.com/user-attachments/assets/b84208b3-610f-4b6a-8a2a-846b3217c4e2)
-  </details>
+> <details>
+> <summary>📍 모집 생성하기</summary>
+> <br>
+>
+> [모집 생성하기 시연 영상 보기](https://github.com/user-attachments/assets/71aded16-7a97-446d-aa00-a5eadd753d20)
+> </details>
+>
+> <details>
+> <summary>🗺️ 지도 기능 (영역 필터링 및 오프셋)</summary>
+> <br>
+>
+> [지도 기능 시연 영상 보기](https://github.com/user-attachments/assets/79223048-1e01-4eb4-806f-b99124371b92)
+> </details>
+>
+> <details>
+> <summary>📋 모집 패널 필터링</summary>
+> <br>
+>
+> [모집 패널 기능 시연 영상 보기](https://github.com/user-attachments/assets/ee4c3cc8-949b-4de9-a669-2594e16e6a7d)
+> </details>
+>
+> <details>
+> <summary>💬 채팅 참여 및 상태별 버튼 제어</summary>
+> <br>
+>
+> [채팅 참여 별 상태 확인 시연 영상 보기](https://github.com/user-attachments/assets/b84208b3-610f-4b6a-8a2a-846b3217c4e2)
+> </details>
 
 </details>
 
@@ -300,57 +300,51 @@
 </details>
 
 <details>
-<summary>💬 [결제 수단 편집 시연 영상]</summary>
+<summary>💳 [결제 수단 편집 시연 영상]</summary>
 
-[결제 수단 편집 영상 보기](https://github.com/user-attachments/assets/5d30b5d9-9a49-4eea-8327-5560bc49d6ee
-)
+[결제 수단 편집 영상 보기](https://github.com/user-attachments/assets/f16808b7-ad11-452a-911a-55156444cb9a)
 
 </details>
 
 <details>
 <summary>⚙️ [설정 페이지 시연 영상]</summary>
 
-[설정 페이지 영상 보기](https://github.com/user-attachments/assets/56ade880-f195-4ce2-9fb7-897092241388
-)
+[설정 페이지 영상 보기](https://github.com/user-attachments/assets/56ade880-f195-4ce2-9fb7-897092241388)
 
 </details>
 
 <details>
 <summary>📢 [공지사항 페이지 시연 영상]</summary>
 
-[공지사항 페이지 영상 보기](https://github.com/user-attachments/assets/320badeb-a28b-43e0-a5e7-9c6fc437176f
-)
+[공지사항 페이지 영상 보기](https://github.com/user-attachments/assets/320badeb-a28b-43e0-a5e7-9c6fc437176f)
 
 </details>
 
 <details>
-<summary>💬 [회원 탈퇴 시연 영상]</summary>
+<summary>❌ [회원 탈퇴 시연 영상]</summary>
 
-[회원 탈퇴 영상 보기](https://github.com/user-attachments/assets/f16808b7-ad11-452a-911a-55156444cb9a
-)
+[회원 탈퇴 영상 보기](https://github.com/user-attachments/assets/195a1dc7-df97-44fc-9117-440f37e732c2)
 
 </details>
 
 <details>
-<summary>💬 [리뷰 및 탑승 기록 시연 영상]</summary>
+<summary>👍 [리뷰 및 탑승 기록 시연 영상]</summary>
 
-[리뷰 및 탑승 기록 영상 보기](https://github.com/user-attachments/assets/195a1dc7-df97-44fc-9117-440f37e732c2
-)
+[리뷰 및 탑승 기록 영상 보기](https://github.com/user-attachments/assets/f5e218d9-3bb5-4ee4-8ac7-314c621b232f)
 
 </details>
 
 <details>
 <summary>👤 [프로필 편집 시연 영상]</summary>
 
-[프로필 편집 영상 보기](https://github.com/user-attachments/assets/cb06f0b4-67c8-429d-86a9-bc521e3df89b
-)
+[프로필 편집 영상 보기](https://github.com/user-attachments/assets/cb06f0b4-67c8-429d-86a9-bc521e3df89b)
 
 </details>
 
 <details>
 <summary>🔔 [알림 기능 시연 영상]</summary>
 
-[알림 기능 영상 보기](https://github.com/user-attachments/assets/0fc18b98-6ba7-4198-bdf2-9511492c8a9f)
+[알림 기능 영상 보기](https://github.com/user-attachments/assets/1c2c2263-5fc0-4932-8a44-fcbc72f26375)
 
 </details>
 
@@ -358,6 +352,13 @@
 <summary>🚕 [기사 전용 페이지 시연 영상]</summary>
 
 [기사 전용 페이지 시연 영상 보기](https://github.com/user-attachments/assets/efaad669-b891-44fd-ad4d-4e2d74e94843)
+
+</details>
+
+<details>
+<summary>🚨 [에러 바운더리 영상]</summary>
+
+[에러 바운더 영상 보기](https://github.com/user-attachments/assets/ff82038e-7825-440b-9605-7b00d0e4a113)
 
 </details>
 
