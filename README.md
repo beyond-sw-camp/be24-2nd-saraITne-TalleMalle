@@ -222,6 +222,24 @@
 </details>
 
 <details>
+<summary>공지사항 페이지</summary>
+
+<br/>
+
+<img src="/img/notice.png" width="700"/>
+
+</details>
+
+<details>
+<summary>설정 페이지</summary>
+
+<br/>
+
+<img src="/img/setting.png" width="700"/>
+
+</details>
+
+<details>
 <summary>기사님 페이지</summary>
 
 <br/>
