@@ -25,6 +25,7 @@ import ProfileModal from '@/components/chat/ProfileModal.vue'
 const authStore = useAuthStore()
 const recruitStore = useRecruitStore()
 const { user } = storeToRefs(authStore)
+const { recruitId } = storeToRefs(recruitStore)
 
 // 하위 컴포넌트(Header, MemberList)에서 내 이름을 쓸 수 있도록 전달
 const myUserName = ref('익명')
@@ -88,6 +89,8 @@ const handleSendMessage = (textToSend) => {
   // 실제 서버 전송
   if (socket && isConnected.value) {
     const payload = {
+      // ▼▼▼ [추가] 방 번호를 함께 전송 ▼▼▼
+      recruitId: recruitId.value,
       userId: myUserId.value,
       userName: myUserName.value,
       userImg: myUserImg.value,
@@ -121,6 +124,8 @@ const handleSendImage = (imageData) => {
   // 2. 소켓 전송
   if (socket && isConnected.value) {
     const payload = {
+      // ▼▼▼ [추가] 방 번호를 함께 전송 ▼▼▼
+      recruitId: recruitId.value,
       type: 'image',
       userId: myUserId.value,
       userName: myUserName.value,
@@ -183,7 +188,7 @@ const fetchInitialData = async () => {
       }
     }
   } catch (error) {
-    console.error('fetchInitialData 실패:', error)
+    // console.error('fetchInitialData 실패:', error)
     messages.value = [
       { id: 1, type: 'date', text: 'Today' },
       { id: 2, type: 'system', text: `⚠️ 데이터를 불러오는데 실패했습니다: ${error.message}` },
@@ -202,12 +207,14 @@ const connectWebSocket = () => {
 
   // 연결 성공
   socket.addEventListener('open', () => {
-    console.log('WEBSOCKET CONNECTED')
+    // console.log('WEBSOCKET CONNECTED')
     isConnected.value = true
 
     // 입장 메시지 전송
     const enterMsg = {
       type: 'enter',
+      // ▼▼▼ [추가] 입장할 방 번호 전송 ▼▼▼
+      recruitId: recruitId.value,
       userId: myUserId.value,
       userName: myUserName.value,
       userImg: myUserImg.value,
@@ -233,6 +240,13 @@ const connectWebSocket = () => {
   socket.addEventListener('message', (e) => {
     try {
       const parsedData = JSON.parse(e.data)
+
+      // [수정 1] 글로벌 타입 필터링 (여기가 핵심입니다!)
+      // DriverPage에서 쓰는 타입들이 들어오면 아예 무시합니다.
+      const ignoreTypes = ['driverLocation', 'drivingPath', 'newRecruit', 'createRecruit']
+      if (parsedData.type && ignoreTypes.includes(parsedData.type)) return
+
+      // [수정 2] payload 추출
       const payload = parsedData.payload !== undefined ? parsedData.payload : parsedData
       handleSocketMessage(payload)
     } catch (err) {
@@ -242,14 +256,14 @@ const connectWebSocket = () => {
 
   // 연결 종료
   socket.addEventListener('close', () => {
-    console.log('WEBSOCKET CLOSED')
+    // console.log('WEBSOCKET CLOSED')
     isConnected.value = false
     window.removeEventListener('beforeunload', sendLeaveMessage)
   })
 
   // 에러 발생
   socket.addEventListener('error', (err) => {
-    console.error('WEBSOCKET ERROR', err)
+    // console.error('WEBSOCKET ERROR', err)
     isConnected.value = false
   })
 }
@@ -269,6 +283,30 @@ const handleSocketMessage = (data) => {
       }
     } catch (e) {}
   }
+  // 1. [내용물 검사] 지도 데이터 특유의 속성(Key)이 있으면 즉시 차단
+  // 스크린샷의 데이터 구조: { lat, lng } 또는 { startLat, destLat, nickname }
+  if (data.lat !== undefined || data.lng !== undefined || data.startLat !== undefined || data.bearing !== undefined) {
+    return
+  }
+
+  // 2. [타입 검사] DriverPage에서 사용하는 타입명이 있다면 차단
+  const ignoreTypes = ['driverLocation', 'drivingPath', 'newRecruit', 'createRecruit']
+  if (data.type && ignoreTypes.includes(data.type)) return
+
+  // 3. [방 번호 검사] recruitId가 있는데 내 방과 다르면 차단
+  //if (data.recruitId && String(data.recruitId) !== String(recruitId.value)) return
+  if (data.recruitId && String(data.recruitId) !== String(recruitId.value)) {
+    return
+  }
+  
+  // 4. [필수 데이터 검사] 채팅 메시지의 자격 요건 확인
+  // 텍스트(text)도 없고, 이미지(image) 타입도 아니면 채팅으로 인정하지 않음
+  // (이 부분이 없으면 {lat:37...} 같은 객체가 강제로 채팅창에 뜸)
+  const hasText = data.text || data.msg || data.message || data.content
+  const isSpecialType = ['image', 'enter', 'leave', 'system'].includes(data.type)
+
+  if (!hasText && !isSpecialType) return
+  // ============================================================
 
   const now = new Date()
   const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
@@ -281,7 +319,12 @@ const handleSocketMessage = (data) => {
 
   if (typeof data === 'object' && data !== null) {
     textContent = data.text || data.msg || data.message || data.content
-    if (!textContent && msgType !== 'image') textContent = JSON.stringify(data)
+    // [중요 수정] 텍스트가 없다고해서 JSON.stringify(data)를 하는 코드를 삭제했습니다.
+    // 위 필터링을 통과했더라도 텍스트가 없으면 빈 문자열로 둡니다.
+    if (!textContent && msgType !== 'image') {
+       return // 텍스트도 없고 이미지도 아니면 그리지 않음
+    }
+    
     userId = data.userId || data.sender || 'Unknown'
     userName = data.userName || data.name
     userImg = data.userImg || data.img
@@ -293,7 +336,7 @@ const handleSocketMessage = (data) => {
   if (msgType === 'leave') {
     if (usersData.value[userId]) {
       delete usersData.value[userId]
-      console.log(`[ChatView] 유저 퇴장: ${userName} (${userId})`)
+      // console.log(`[ChatView] 유저 퇴장: ${userName} (${userId})`)
     }
     return
   }
@@ -317,7 +360,7 @@ const handleSocketMessage = (data) => {
     }
   }
 
-  // 4. 입장(enter) 시 Handshake (exist 메시지 응답)
+  // 4. 입장(enter) 시 Handshake
   if (msgType === 'enter') {
     if (socket && isConnected.value) {
       const existMsg = {
@@ -326,17 +369,6 @@ const handleSocketMessage = (data) => {
         userName: myUserName.value,
         userImg: myUserImg.value,
         text: '',
-        user: {
-          name: myUserName.value,
-          img: myUserImg.value,
-          lv: 'LV. 5',
-          meta: '현재 접속 중',
-          bio: '반갑습니다!',
-          score: 50,
-          rank: '일반',
-          stats: { time: 0, silent: 0 },
-          reviews: [],
-        },
       }
       socket.send(JSON.stringify(existMsg))
     }
