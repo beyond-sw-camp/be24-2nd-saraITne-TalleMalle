@@ -33,8 +33,8 @@ let googleTokenClient = null
 const loginWithKakao = () => {
   if (window.Kakao && window.Kakao.isInitialized()) {
     window.Kakao.Auth.authorize({
-      // 로컬 개발 환경용 리다이렉트 URI
-      redirectUri: 'http://localhost:5173/',
+      // 배포용 리다이렉트 URI
+      redirectUri: 'https://wwww.testjake.kro.kr/',
     })
   } else {
     alert('카카오 SDK가 아직 로드되지 않았습니다.')
@@ -130,20 +130,14 @@ onMounted(() => {
     </div>
 
     <div class="grid grid-cols-2 gap-3">
-      <button 
-        type="button" 
-        @click="loginWithGoogle"
-        class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-95"
-      >
+      <button type="button" @click="loginWithGoogle"
+        class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all active:scale-95">
         <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" class="w-4 h-4" alt="Google" />
         <span class="text-sm font-semibold text-slate-600">Google</span>
       </button>
 
-      <button 
-        type="button" 
-        @click="loginWithKakao"
-        class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-[#FEE500] hover:border-[#FEE500] transition-all active:scale-95 group"
-      >
+      <button type="button" @click="loginWithKakao"
+        class="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl hover:bg-[#FEE500] hover:border-[#FEE500] transition-all active:scale-95 group">
         <MessageCircle class="w-4 h-4 text-[#3C1E1E] fill-current" />
         <span class="text-sm font-semibold text-slate-600 group-hover:text-[#3C1E1E]">Kakao</span>
       </button>
