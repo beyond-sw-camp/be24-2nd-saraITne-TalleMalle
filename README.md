@@ -97,12 +97,12 @@
     <tr>
       <td valign="top">
         <p>
-          <a href="https://www.testjake.kro.kr/">
+          <a href="https://www.tallemalle.kro.kr/">
             <img src="https://img.shields.io/badge/TalleMalle-사용자_사이트-blue?style=for-the-badge&logo=googlechrome&logoColor=white">
           </a>
           &nbsp;
-          <a href="https://driver.testjake.kro.kr/">
-            <img src="https://img.shields.io/badge/TalleMalle-기사님_사이트-4dabf7?style=for-the-badge&logo=googlechrome&logoColor=white">
+          <a href="https://driver.tallemalle.kro.kr/">
+            <img src="https://img.shields.io/badge/TalleMalle-기사님_사이트-7c3aed?style=for-the-badge&logo=googlechrome&logoColor=white">
           </a>
         </p>
       </td>
