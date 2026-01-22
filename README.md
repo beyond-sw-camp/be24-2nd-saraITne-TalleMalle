@@ -317,13 +317,6 @@
 </details>
 
 <details>
-<summary>💳 [결제 수단 편집 시연 영상]</summary>
-
-[결제 수단 편집 영상 보기](https://github.com/user-attachments/assets/f16808b7-ad11-452a-911a-55156444cb9a)
-
-</details>
-
-<details>
 <summary>⚙️ [설정 페이지 시연 영상]</summary>
 
 [설정 페이지 영상 보기](https://github.com/user-attachments/assets/56ade880-f195-4ce2-9fb7-897092241388)
@@ -338,23 +331,34 @@
 </details>
 
 <details>
+<summary>💳 [결제 수단 편집 시연 영상]</summary>
+
+[결제 수단 편집 영상 보기](https://github.com/user-attachments/assets/7dea4450-a316-4020-8516-5bc66a1864b7)
+
+</details>
+
+<details>
 <summary>❌ [회원 탈퇴 시연 영상]</summary>
 
-[회원 탈퇴 영상 보기](https://github.com/user-attachments/assets/195a1dc7-df97-44fc-9117-440f37e732c2)
+[회원 탈퇴 영상 보기](https://github.com/user-attachments/assets/bc6b4512-93b8-4960-b58b-2caf4685d77f)
 
 </details>
 
 <details>
 <summary>👍 [리뷰 및 탑승 기록 시연 영상]</summary>
 
-[리뷰 및 탑승 기록 영상 보기](https://github.com/user-attachments/assets/f5e218d9-3bb5-4ee4-8ac7-314c621b232f)
+[리뷰 및 탑승 기록 영상 보기](https://github.com/user-attachments/assets/1b13e72f-ac8f-4a2e-9a91-8081621aee83)
 
 </details>
 
 <details>
 <summary>👤 [프로필 편집 시연 영상]</summary>
 
-[프로필 편집 영상 보기](https://github.com/user-attachments/assets/cb06f0b4-67c8-429d-86a9-bc521e3df89b)
+[프로필 편집 영상 보기](https://github.com/user-attachments/assets/75d153a1-591a-4b5b-9d3e-f4e3621b3cf7
+)
+
+
+
 
 </details>
 
